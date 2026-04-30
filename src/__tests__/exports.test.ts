@@ -1,15 +1,4 @@
-import {
-  AppCreatedRecord,
-  AppQuery,
-  AppRecord,
-  EncryptedPayload,
-  LogLevel,
-  LogPayload,
-  LogQuery,
-  LogRecord,
-  SubscriptionLevel,
-  UserRecord
-} from '../index'
+import { AppCreatedRecord, AppQuery, AppRecord, EncryptedPayload, LogLevel, LogPayload, LogQuery, LogRecord, SubscriptionLevel, UserRecord } from '../index'
 
 describe('Lumber-Kit exports — KIT-01 through KIT-05', () => {
   describe('LogLevel (KIT-03, D-01, D-02)', () => {
