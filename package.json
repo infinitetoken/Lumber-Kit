@@ -1,0 +1,43 @@
+{
+  "name": "@infinitetoken/lumber-kit",
+  "version": "0.1.0",
+  "description": "Shared TypeScript types and wire format contracts for the Lumber cloud logging suite",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/cjs/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json && echo '{\"type\": \"module\"}' > dist/esm/package.json",
+    "clean": "rm -rf dist coverage",
+    "test": "jest",
+    "lint": "eslint .",
+    "fix": "eslint . --fix",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.59.1",
+    "@typescript-eslint/parser": "^8.59.1",
+    "eslint": "^10.2.1",
+    "eslint-config-prettier": "^10.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "jest": "^30.3.0",
+    "prettier": "^3.8.3",
+    "ts-jest": "^29.4.9",
+    "typescript": "^6.0.3"
+  }
+}
