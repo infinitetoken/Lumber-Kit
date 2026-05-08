@@ -15,9 +15,9 @@ export interface LogPayload {
 }
 
 /**
- * Encrypted wire format.
- * payload = base64(IV[12 bytes] + AuthTag[16 bytes] + ciphertext)
- * v = wire format version — always 1 in v1. Changes here are semver major.
+ * Encrypted wire format (v2 — ECIES).
+ * payload = base64(eph_pub[32] + IV[12] + AuthTag[16] + ciphertext)
+ * v = wire format version — always 2 in v2. Changes here are semver major.
  */
 export interface EncryptedPayload {
   payload: string
@@ -41,25 +41,26 @@ export interface LogRecord {
 
 /**
  * API response shape for a listed or fetched app.
- * encryption_key is intentionally absent — it is returned once (in AppCreatedRecord) and never again.
+ * public_key doubles as both the app identifier and the encryption recipient key.
+ * private_key is intentionally absent — returned once in AppCreatedRecord and never again.
  * Source: D-06, ENCRYPT-02, ENCRYPT-03
  */
 export interface AppRecord {
   id: string
   user_id: string
   name: string
-  token: string
+  public_key: string
   created_at: string
   updated_at: string
 }
 
 /**
  * App creation response only (POST /apps 201).
- * Includes encryption_key once; subsequent GET /apps and GET /apps/:id responses use AppRecord.
+ * Includes private_key once; subsequent GET /apps and GET /apps/:id responses use AppRecord.
  * Source: D-06, ENCRYPT-02
  */
 export interface AppCreatedRecord extends AppRecord {
-  encryption_key: string
+  private_key: string
 }
 
 /**
