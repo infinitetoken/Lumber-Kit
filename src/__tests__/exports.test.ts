@@ -53,33 +53,32 @@ describe('Lumber-Kit exports — KIT-01 through KIT-05', () => {
   })
 
   describe('AppRecord (KIT-03, ENCRYPT-02, ENCRYPT-03)', () => {
-    it('does not include encryption_key field', () => {
+    it('does not include private_key field', () => {
       const app: AppRecord = {
         id: '507f1f77bcf86cd799439013',
         user_id: '507f1f77bcf86cd799439014',
         name: 'my-app',
-        token: 'tok_abc123',
+        public_key: 'x25519pubkeybase64==',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }
-      // encryption_key must not exist on AppRecord — TypeScript enforces this at compile time
-      // This runtime check confirms the shape does not accidentally include it
-      expect('encryption_key' in app).toBe(false)
+      // private_key must not exist on AppRecord — TypeScript enforces this at compile time
+      expect('private_key' in app).toBe(false)
     })
   })
 
   describe('AppCreatedRecord (ENCRYPT-02)', () => {
-    it('extends AppRecord with encryption_key', () => {
+    it('is the same shape as AppRecord (key pair generated on-device)', () => {
       const created: AppCreatedRecord = {
         id: '507f1f77bcf86cd799439013',
         user_id: '507f1f77bcf86cd799439014',
         name: 'my-app',
-        token: 'tok_abc123',
+        public_key: 'x25519pubkeybase64==',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        encryption_key: 'aes256gcmkeybase64encoded=='
       }
-      expect(created.encryption_key).toBe('aes256gcmkeybase64encoded==')
+      expect(created.public_key).toBe('x25519pubkeybase64==')
+      expect('private_key' in created).toBe(false)
     })
   })
 

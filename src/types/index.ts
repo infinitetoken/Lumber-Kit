@@ -55,13 +55,11 @@ export interface AppRecord {
 }
 
 /**
- * App creation response only (POST /apps 201).
- * Includes private_key once; subsequent GET /apps and GET /apps/:id responses use AppRecord.
+ * App creation response (POST /apps 201).
+ * Same shape as AppRecord — no secrets returned, key pair is generated on-device.
  * Source: D-06, ENCRYPT-02
  */
-export interface AppCreatedRecord extends AppRecord {
-  private_key: string
-}
+export type AppCreatedRecord = AppRecord
 
 /**
  * API response shape for an authenticated user.
