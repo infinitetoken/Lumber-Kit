@@ -40,12 +40,12 @@ describe('Lumber-Kit exports — KIT-01 through KIT-05', () => {
     it('is assignable with all required fields', () => {
       const record: LogRecord = {
         id: '507f1f77bcf86cd799439011',
-        app_id: '507f1f77bcf86cd799439012',
+        appId: '507f1f77bcf86cd799439012',
         level: LogLevel.Info,
         flagged: false,
         payload: 'base64encodedciphertext==',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       }
       expect(record.level).toBe(1)
       expect(record.flagged).toBe(false)
@@ -53,17 +53,17 @@ describe('Lumber-Kit exports — KIT-01 through KIT-05', () => {
   })
 
   describe('AppRecord (KIT-03, ENCRYPT-02, ENCRYPT-03)', () => {
-    it('does not include private_key field', () => {
+    it('does not include privateKey field', () => {
       const app: AppRecord = {
         id: '507f1f77bcf86cd799439013',
-        user_id: '507f1f77bcf86cd799439014',
+        userId: '507f1f77bcf86cd799439014',
         name: 'my-app',
-        public_key: 'x25519pubkeybase64==',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        publicKey: 'x25519pubkeybase64==',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       }
-      // private_key must not exist on AppRecord — TypeScript enforces this at compile time
-      expect('private_key' in app).toBe(false)
+      // privateKey must not exist on AppRecord — TypeScript enforces this at compile time
+      expect('privateKey' in app).toBe(false)
     })
   })
 
@@ -71,14 +71,14 @@ describe('Lumber-Kit exports — KIT-01 through KIT-05', () => {
     it('is the same shape as AppRecord (key pair generated on-device)', () => {
       const created: AppCreatedRecord = {
         id: '507f1f77bcf86cd799439013',
-        user_id: '507f1f77bcf86cd799439014',
+        userId: '507f1f77bcf86cd799439014',
         name: 'my-app',
-        public_key: 'x25519pubkeybase64==',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        publicKey: 'x25519pubkeybase64==',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       }
-      expect(created.public_key).toBe('x25519pubkeybase64==')
-      expect('private_key' in created).toBe(false)
+      expect(created.publicKey).toBe('x25519pubkeybase64==')
+      expect('privateKey' in created).toBe(false)
     })
   })
 
@@ -89,7 +89,7 @@ describe('Lumber-Kit exports — KIT-01 through KIT-05', () => {
         flagged: true,
         limit: 50,
         offset: 0,
-        sort: '-created_at',
+        sort: '-createdAt',
         from: '2026-01-01T00:00:00Z',
         to: '2026-12-31T23:59:59Z'
       }
@@ -129,16 +129,16 @@ describe('Lumber-Kit exports — KIT-01 through KIT-05', () => {
   })
 
   describe('UserRecord', () => {
-    it('is assignable with subscription_level as SubscriptionLevel', () => {
+    it('is assignable with subscriptionLevel as SubscriptionLevel', () => {
       const u: UserRecord = {
         id: '507f1f77bcf86cd799439015',
         email: 'dev@example.com',
-        subscription_level: SubscriptionLevel.Hobby,
-        agreed_to_terms: true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        subscriptionLevel: SubscriptionLevel.Hobby,
+        agreedToTerms: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       }
-      expect(u.subscription_level).toBe(0)
+      expect(u.subscriptionLevel).toBe(0)
     })
   })
 })

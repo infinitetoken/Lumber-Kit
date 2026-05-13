@@ -9,7 +9,7 @@ export const enum LogLevel {
   Fatal = 4
 }
 
-/** User subscription tier. Mirrors User.subscription_level in Lumber-API. */
+/** User subscription tier. Mirrors User.subscriptionLevel in Lumber-API. */
 export const enum SubscriptionLevel {
   Hobby = 0,
   Dev = 1,

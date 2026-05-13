@@ -31,27 +31,27 @@ export interface EncryptedPayload {
  */
 export interface LogRecord {
   id: string
-  app_id: string
+  appId: string
   level: LogLevel
   flagged: boolean
   payload: string
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
 }
 
 /**
  * API response shape for a listed or fetched app.
- * public_key doubles as both the app identifier and the encryption recipient key.
- * private_key is intentionally absent — returned once in AppCreatedRecord and never again.
+ * publicKey doubles as both the app identifier and the encryption recipient key.
+ * privateKey is intentionally absent — returned once in AppCreatedRecord and never again.
  * Source: D-06, ENCRYPT-02, ENCRYPT-03
  */
 export interface AppRecord {
   id: string
-  user_id: string
+  userId: string
   name: string
-  public_key: string
-  created_at: string
-  updated_at: string
+  publicKey: string
+  createdAt: string
+  updatedAt: string
 }
 
 /**
@@ -63,15 +63,15 @@ export type AppCreatedRecord = AppRecord
 
 /**
  * API response shape for an authenticated user.
- * password_digest is intentionally absent.
+ * passwordDigest is intentionally absent.
  */
 export interface UserRecord {
   id: string
   email: string
-  subscription_level: SubscriptionLevel
-  agreed_to_terms: boolean
-  created_at: string
-  updated_at: string
+  subscriptionLevel: SubscriptionLevel
+  agreedToTerms: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 /**
