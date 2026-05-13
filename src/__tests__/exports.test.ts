@@ -75,7 +75,7 @@ describe('Lumber-Kit exports — KIT-01 through KIT-05', () => {
         name: 'my-app',
         publicKey: 'x25519pubkeybase64==',
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       }
       expect(created.publicKey).toBe('x25519pubkeybase64==')
       expect('privateKey' in created).toBe(false)
