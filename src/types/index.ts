@@ -27,6 +27,7 @@ export interface EncryptedPayload {
 /**
  * API response shape for a stored log.
  * payload is the ciphertext — level and flagged are stored unencrypted for server-side filtering.
+ * context and metadata are stored unencrypted alongside the payload.
  * Source: D-06, ENCRYPT-05, ENCRYPT-06
  */
 export interface LogRecord {
@@ -35,6 +36,8 @@ export interface LogRecord {
   level: LogLevel
   flagged: boolean
   payload: string
+  context?: Record<string, unknown>
+  metadata?: Record<string, unknown>
   createdAt: string
   updatedAt: string
 }
@@ -61,6 +64,23 @@ export interface AppRecord {
  */
 export type AppCreatedRecord = AppRecord
 
+export interface FcmToken {
+  token: string
+  deviceId?: string
+  platform?: 'ios' | 'android' | 'web'
+}
+
+export interface NotificationPreference {
+  enabled?: boolean
+  minimumLevel?: number
+}
+
+export interface NotificationPreferences {
+  enabled?: boolean
+  minimumLevel?: number
+  perApp?: Record<string, NotificationPreference>
+}
+
 /**
  * API response shape for an authenticated user.
  * passwordDigest is intentionally absent.
@@ -70,6 +90,8 @@ export interface UserRecord {
   email: string
   subscriptionLevel: SubscriptionLevel
   agreedToTerms: boolean
+  notificationPreferences: NotificationPreferences
+  fcmTokens: FcmToken[]
   createdAt: string
   updatedAt: string
 }
@@ -78,11 +100,12 @@ export interface UserRecord {
  * Filter params for GET /logs.
  * Source: D-06
  */
-export interface LogQuery {
-  level?: LogLevel
+export interface LogsQuery {
+  appIds?: string[]
+  levels?: LogLevel[]
   flagged?: boolean
   limit?: number
-  offset?: number
+  cursor?: string
   sort?: string
   from?: string
   to?: string
@@ -92,8 +115,10 @@ export interface LogQuery {
  * Filter params for GET /apps.
  * Source: D-06
  */
-export interface AppQuery {
+export interface AppsQuery {
   limit?: number
-  offset?: number
+  cursor?: string
   sort?: string
+  from?: string
+  to?: string
 }

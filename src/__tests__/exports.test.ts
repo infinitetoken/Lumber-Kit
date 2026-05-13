@@ -1,4 +1,4 @@
-import { AppCreatedRecord, AppQuery, AppRecord, EncryptedPayload, LogLevel, LogPayload, LogQuery, LogRecord, SubscriptionLevel, UserRecord } from '../index'
+import { AppCreatedRecord, AppRecord, AppsQuery, EncryptedPayload, LogLevel, LogPayload, LogRecord, LogsQuery, SubscriptionLevel, UserRecord } from '../index'
 
 describe('Lumber-Kit exports — KIT-01 through KIT-05', () => {
   describe('LogLevel (KIT-03, D-01, D-02)', () => {
@@ -82,29 +82,30 @@ describe('Lumber-Kit exports — KIT-01 through KIT-05', () => {
     })
   })
 
-  describe('LogQuery (KIT-04, D-06)', () => {
+  describe('LogsQuery (KIT-04, D-06)', () => {
     it('accepts all optional filter params', () => {
-      const q: LogQuery = {
-        level: LogLevel.Error,
+      const q: LogsQuery = {
+        appIds: ['507f1f77bcf86cd799439012'],
+        levels: [LogLevel.Error],
         flagged: true,
         limit: 50,
-        offset: 0,
+        cursor: '507f1f77bcf86cd799439011',
         sort: '-createdAt',
         from: '2026-01-01T00:00:00Z',
         to: '2026-12-31T23:59:59Z'
       }
-      expect(q.level).toBe(3)
+      expect(q.levels?.[0]).toBe(3)
     })
 
     it('accepts empty object (all fields optional)', () => {
-      const q: LogQuery = {}
+      const q: LogsQuery = {}
       expect(q).toBeDefined()
     })
   })
 
-  describe('AppQuery (KIT-04, D-06)', () => {
+  describe('AppsQuery (KIT-04, D-06)', () => {
     it('accepts all optional filter params', () => {
-      const q: AppQuery = { limit: 10, offset: 0, sort: 'name' }
+      const q: AppsQuery = { limit: 10, cursor: '507f1f77bcf86cd799439011', from: '2026-01-01T00:00:00Z', to: '2026-12-31T23:59:59Z', sort: 'name' }
       expect(q.limit).toBe(10)
     })
   })
@@ -135,6 +136,8 @@ describe('Lumber-Kit exports — KIT-01 through KIT-05', () => {
         email: 'dev@example.com',
         subscriptionLevel: SubscriptionLevel.Hobby,
         agreedToTerms: true,
+        notificationPreferences: { enabled: true, minimumLevel: 2, perApp: {} },
+        fcmTokens: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
