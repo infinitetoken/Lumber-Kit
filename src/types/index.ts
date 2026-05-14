@@ -34,6 +34,8 @@ export interface LogPrivate {
  */
 export interface LogRecord {
   id: string
+  createdAt: string
+  updatedAt: string
 
   appId: string
   requestId?: string
@@ -48,9 +50,6 @@ export interface LogRecord {
   metadata?: Record<string, unknown>
 
   private?: LogPrivate
-
-  createdAt: string
-  updatedAt: string
 }
 
 /**
@@ -98,7 +97,7 @@ export interface ApiKeyRecord {
 /**
  * App membership / authorization.
  */
-export interface AppMembershipRecord {
+export interface MembershipRecord {
   id: string
   createdAt: string
   updatedAt: string
