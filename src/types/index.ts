@@ -136,9 +136,23 @@ export interface UserRecord {
   email: string
   publicKey?: string
   subscriptionLevel: SubscriptionLevel
-  agreedToTerms: boolean
+  agreedToTermsVersion?: string
   notificationPreferences: NotificationPreferences
   fcmTokens: FcmToken[]
+}
+
+export interface ResponseMetadata {
+  requestId: string
+  durationMs: number
+  warnings?: string[]
+  cursor?: string | null
+  hasMore?: boolean
+  count?: number
+}
+
+export interface ApiResponse<T> {
+  data: T
+  metadata: ResponseMetadata
 }
 
 /**

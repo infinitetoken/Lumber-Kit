@@ -135,7 +135,7 @@ describe('Lumber-Kit exports — KIT-01 through KIT-05', () => {
         id: '507f1f77bcf86cd799439015',
         email: 'dev@example.com',
         subscriptionLevel: SubscriptionLevel.Hobby,
-        agreedToTerms: true,
+        agreedToTermsVersion: '2025-05-14',
         notificationPreferences: { enabled: true, minimumLevel: 2, perApp: {} },
         fcmTokens: [],
         createdAt: new Date().toISOString(),
