@@ -1,68 +1,113 @@
 import { LogLevel, SubscriptionLevel } from '../constants'
 
 /**
- * Plaintext log fields before encryption.
- * Lumber-Node and Lumber-Python serialize this object, then encrypt it
- * into EncryptedPayload.payload using AES-256-GCM.
+ * Structured log context content.
  */
-export interface LogPayload {
-  message?: string
+export interface LogContext {
+  requestId?: string
+  traceId?: string
+
   code?: string
+  method?: string
   line?: number
   column?: number
-  method?: string
+
   note?: string
+
+  [key: string]: unknown
 }
 
 /**
- * Encrypted wire format (v2 — ECIES).
- * payload = base64(eph_pub[32] + IV[12] + AuthTag[16] + ciphertext)
- * v = wire format version — always 2 in v2. Changes here are semver major.
+ * Encrypted private container.
+ * payload = base64(ciphertext)
+ * nonce = base64(random nonce/iv)
+ * keyVersion enables future rotation support.
  */
-export interface EncryptedPayload {
+export interface LogPrivate {
   payload: string
-  v: number
+  nonce: string
+  keyVersion: number
 }
 
 /**
  * API response shape for a stored log.
- * payload is the ciphertext — level and flagged are stored unencrypted for server-side filtering.
- * context and metadata are stored unencrypted alongside the payload.
- * Source: D-06, ENCRYPT-05, ENCRYPT-06
  */
 export interface LogRecord {
   id: string
+
   appId: string
+  requestId?: string
+  traceId?: string
+
   level: LogLevel
+  message: string
+
   flagged: boolean
-  payload: string
-  context?: Record<string, unknown>
+
+  context?: LogContext
   metadata?: Record<string, unknown>
+
+  private?: LogPrivate
+
   createdAt: string
   updatedAt: string
+}
+
+/**
+ * Wrapped application encryption key for a specific user.
+ */
+export interface AppEncryptedKey {
+  userId: string
+  encryptedKey: string
+  keyVersion: number
 }
 
 /**
  * API response shape for a listed or fetched app.
- * publicKey doubles as both the app identifier and the encryption recipient key.
- * privateKey is intentionally absent — returned once in AppCreatedRecord and never again.
- * Source: D-06, ENCRYPT-02, ENCRYPT-03
  */
 export interface AppRecord {
   id: string
-  userId: string
-  name: string
-  publicKey: string
   createdAt: string
   updatedAt: string
+
+  name: string
+  encryptedKeys?: AppEncryptedKey[]
 }
 
 /**
- * App creation response (POST /apps 201).
- * Same shape as AppRecord — no secrets returned, key pair is generated on-device.
- * Source: D-06, ENCRYPT-02
+ * App creation response.
+ * Initial wrapped encryption key may optionally be returned.
  */
-export type AppCreatedRecord = AppRecord
+export interface AppCreatedRecord extends AppRecord {
+  apiKey?: string
+}
+
+/**
+ * Machine authentication credential.
+ */
+export interface ApiKeyRecord {
+  id: string
+  createdAt: string
+  updatedAt: string
+
+  appId: string
+
+  name?: string
+}
+
+/**
+ * App membership / authorization.
+ */
+export interface AppMembershipRecord {
+  id: string
+  createdAt: string
+  updatedAt: string
+
+  appId: string
+  userId: string
+
+  role: 'owner' | 'admin' | 'read' | 'write'
+}
 
 export interface FcmToken {
   token: string
@@ -82,23 +127,23 @@ export interface NotificationPreferences {
 }
 
 /**
- * API response shape for an authenticated user.
- * passwordDigest is intentionally absent.
+ * Public user profile returned from API.
  */
 export interface UserRecord {
   id: string
+  createdAt: string
+  updatedAt: string
+
   email: string
+  publicKey?: string
   subscriptionLevel: SubscriptionLevel
   agreedToTerms: boolean
   notificationPreferences: NotificationPreferences
   fcmTokens: FcmToken[]
-  createdAt: string
-  updatedAt: string
 }
 
 /**
  * Filter params for GET /logs.
- * Source: D-06
  */
 export interface LogsQuery {
   appIds?: string[]
@@ -113,7 +158,6 @@ export interface LogsQuery {
 
 /**
  * Filter params for GET /apps.
- * Source: D-06
  */
 export interface AppsQuery {
   limit?: number
