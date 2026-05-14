@@ -1,5 +1,7 @@
 import { LogLevel, SubscriptionLevel } from '../constants'
 
+export type Appearance = 'system' | 'dark' | 'light'
+
 /**
  * Structured log context content.
  */
@@ -70,6 +72,8 @@ export interface AppRecord {
   updatedAt: string
 
   name: string
+  color?: string
+  logoUrl?: string
   encryptedKeys?: AppEncryptedKey[]
 }
 
@@ -135,6 +139,8 @@ export interface UserRecord {
 
   email: string
   publicKey?: string
+  appearance?: Appearance
+  color?: string
   subscriptionLevel: SubscriptionLevel
   agreedToTermsVersion?: string
   notificationPreferences: NotificationPreferences
