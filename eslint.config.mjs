@@ -48,6 +48,10 @@ export default [
           format: null
         },
         {
+          selector: 'enumMember',
+          format: ['PascalCase', 'camelCase', 'UPPER_CASE']
+        },
+        {
           selector: 'default',
           format: ['camelCase'],
           leadingUnderscore: 'allow',

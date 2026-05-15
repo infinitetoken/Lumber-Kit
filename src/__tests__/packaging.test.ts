@@ -16,6 +16,14 @@ describe('packaging smoke — dist/cjs (requires `npm run build`)', () => {
     expect(kit.LogLevel.Fatal).toBe(4)
   })
 
+  t('exports logLevelToName mapping', () => {
+    expect(kit.logLevelToName[0]).toBe('debug')
+    expect(kit.logLevelToName[1]).toBe('info')
+    expect(kit.logLevelToName[2]).toBe('warn')
+    expect(kit.logLevelToName[3]).toBe('error')
+    expect(kit.logLevelToName[4]).toBe('fatal')
+  })
+
   t('exports SubscriptionLevel with correct numeric values', () => {
     expect(kit.SubscriptionLevel.Hobby).toBe(0)
     expect(kit.SubscriptionLevel.Dev).toBe(1)
@@ -23,11 +31,11 @@ describe('packaging smoke — dist/cjs (requires `npm run build`)', () => {
     expect(kit.SubscriptionLevel.Enterprise).toBe(3)
   })
 
-  t('exports levelToName mapping', () => {
-    expect(kit.levelToName[0]).toBe('hobby')
-    expect(kit.levelToName[1]).toBe('dev')
-    expect(kit.levelToName[2]).toBe('pro')
-    expect(kit.levelToName[3]).toBe('enterprise')
+  t('exports subscriptionLevelToName mapping', () => {
+    expect(kit.subscriptionLevelToName[0]).toBe('hobby')
+    expect(kit.subscriptionLevelToName[1]).toBe('dev')
+    expect(kit.subscriptionLevelToName[2]).toBe('pro')
+    expect(kit.subscriptionLevelToName[3]).toBe('enterprise')
   })
 
   t('exports subscriptionLimits with correct shapes', () => {
