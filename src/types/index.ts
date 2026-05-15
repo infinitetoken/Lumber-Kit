@@ -21,8 +21,8 @@ export interface LogContext {
 
 /**
  * Encrypted private container.
- * payload = base64(ciphertext)
- * nonce = base64(random nonce/iv)
+ * payload = base64(authTag + ciphertext)
+ * nonce = base64(random IV)
  * keyVersion enables future rotation support.
  */
 export interface LogPrivate {
@@ -65,6 +65,7 @@ export interface AppEncryptedKey {
 
 /**
  * API response shape for a listed or fetched app.
+ * encryptedKey is the requesting user's wrapped copy of the app key, or null if none exists.
  */
 export interface AppRecord {
   id: string
@@ -74,7 +75,7 @@ export interface AppRecord {
   name: string
   color?: string
   logoUrl?: string
-  encryptedKeys?: AppEncryptedKey[]
+  encryptedKey: string | null
 }
 
 /**
@@ -184,4 +185,25 @@ export interface AppsQuery {
   sort?: string
   from?: string
   to?: string
+}
+
+export type DeviceLinkStatus = 'pending' | 'approved' | 'denied'
+
+/**
+ * Response from POST /device-links.
+ */
+export interface DeviceLinkCreatedRecord {
+  id: string
+  expiresAt: string
+}
+
+/**
+ * Response from GET /device-links/:id.
+ * encryptedKey is present only when status is 'approved'.
+ */
+export interface DeviceLinkRecord {
+  id: string
+  status: DeviceLinkStatus
+  encryptedKey?: string
+  expiresAt: string
 }

@@ -1,5 +1,5 @@
 import { LogLevel, logLevels, SubscriptionLevel, subscriptionLevels } from '../constants'
-import { Appearance } from '../types'
+import { Appearance, DeviceLinkStatus } from '../types'
 
 const appearanceValues: Appearance[] = ['system', 'dark', 'light']
 
@@ -11,3 +11,7 @@ export const isValidColor = (value: string): boolean => /^#([0-9a-fA-F]{3}|[0-9a
 export const isValidLogLevel = (value: unknown): value is LogLevel => (logLevels as readonly unknown[]).includes(value)
 
 export const isValidSubscriptionLevel = (value: unknown): value is SubscriptionLevel => (subscriptionLevels as readonly unknown[]).includes(value as number)
+
+const deviceLinkStatuses: DeviceLinkStatus[] = ['pending', 'approved', 'denied']
+
+export const isValidDeviceLinkStatus = (value: unknown): value is DeviceLinkStatus => deviceLinkStatuses.includes(value as DeviceLinkStatus)
