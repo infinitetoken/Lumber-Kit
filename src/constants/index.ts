@@ -21,6 +21,18 @@ export const logLevelToName: Record<number, LogLevelName> = {
   [LogLevel.Fatal]: 'fatal'
 }
 
+/** Maps lowercase log level name to its numeric value. */
+export const logLevelNameToLevel: Record<LogLevelName, LogLevel> = {
+  debug: LogLevel.Debug,
+  info: LogLevel.Info,
+  warn: LogLevel.Warn,
+  error: LogLevel.Error,
+  fatal: LogLevel.Fatal
+}
+
+/** All valid log levels, ordered from least to most severe. */
+export const logLevels: readonly LogLevel[] = [LogLevel.Debug, LogLevel.Info, LogLevel.Warn, LogLevel.Error, LogLevel.Fatal]
+
 /** User subscription level. Mirrors User.subscriptionLevel in Lumber-API. */
 export const enum SubscriptionLevel {
   Hobby = 0,
@@ -39,6 +51,10 @@ export const subscriptionLevelToName: Record<SubscriptionLevel, SubscriptionLeve
   [SubscriptionLevel.Pro]: 'pro',
   [SubscriptionLevel.Enterprise]: 'enterprise'
 }
+
+/** All valid subscription levels, ordered from least to most severe. */
+export const subscriptionLevels: readonly SubscriptionLevel[] = [SubscriptionLevel.Hobby, SubscriptionLevel.Dev, SubscriptionLevel.Pro, SubscriptionLevel.Enterprise]
+
 export type SubscriptionLimits = {
   apps: number
   memberships: number
