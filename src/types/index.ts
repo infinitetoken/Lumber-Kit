@@ -113,7 +113,7 @@ export interface MembershipRecord {
   role: 'owner' | 'admin' | 'read' | 'write'
 }
 
-export interface FcmToken {
+export interface PushToken {
   token: string
   deviceId?: string
   platform?: 'ios' | 'android' | 'web'
@@ -145,7 +145,7 @@ export interface UserRecord {
   subscriptionLevel: SubscriptionLevel
   agreedToTermsVersion?: string
   notificationPreferences: NotificationPreferences
-  fcmTokens: FcmToken[]
+  pushTokens: PushToken[]
 }
 
 export interface ResponseMetadata {
