@@ -39,9 +39,9 @@ describe('packaging smoke — dist/cjs (requires `npm run build`)', () => {
   })
 
   t('exports subscriptionLimits with correct shapes', () => {
-    expect(kit.subscriptionLimits[0].apps).toBe(1)
-    expect(kit.subscriptionLimits[1].apps).toBe(5)
-    expect(kit.subscriptionLimits[2].apps).toBe(15)
+    expect(kit.subscriptionLimits[0].apps).toBe(5)
+    expect(kit.subscriptionLimits[1].apps).toBe(10)
+    expect(kit.subscriptionLimits[2].apps).toBe(20)
     expect(kit.subscriptionLimits[3].apps).toBe(Infinity)
   })
 })
