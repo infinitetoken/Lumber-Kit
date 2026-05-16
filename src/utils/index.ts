@@ -1,5 +1,5 @@
 import { LogLevel, logLevels, SubscriptionLevel, subscriptionLevels } from '../constants'
-import { Appearance, DeviceLinkStatus } from '../types'
+import { Appearance, DeviceLinkStatus, TeamMemberRecord } from '../types'
 
 const appearanceValues: Appearance[] = ['system', 'dark', 'light']
 
@@ -15,3 +15,18 @@ export const isValidSubscriptionLevel = (value: unknown): value is SubscriptionL
 const deviceLinkStatuses: DeviceLinkStatus[] = ['pending', 'approved', 'denied']
 
 export const isValidDeviceLinkStatus = (value: unknown): value is DeviceLinkStatus => deviceLinkStatuses.includes(value as DeviceLinkStatus)
+
+const teamMemberRoles: TeamMemberRecord['role'][] = ['owner', 'admin', 'member']
+
+export const isValidTeamMemberRole = (value: unknown): value is TeamMemberRecord['role'] => teamMemberRoles.includes(value as TeamMemberRecord['role'])
+
+/** Accepts any valid absolute URL (https://..., http://..., etc.). */
+export const isValidImageUrl = (value: unknown): value is string => {
+  if (typeof value !== 'string' || value.length === 0) return false
+  try {
+    new URL(value)
+    return true
+  } catch {
+    return false
+  }
+}

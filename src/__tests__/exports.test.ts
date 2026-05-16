@@ -1,4 +1,4 @@
-import { isValidAppearance, isValidColor, isValidLogLevel, isValidSubscriptionLevel, LogLevel, SubscriptionLevel } from '../index'
+import { isValidAppearance, isValidColor, isValidImageUrl, isValidLogLevel, isValidSubscriptionLevel, isValidTeamMemberRole, LogLevel, SubscriptionLevel } from '../index'
 
 describe('isValidAppearance', () => {
   it('accepts valid values', () => {
@@ -80,5 +80,38 @@ describe('isValidSubscriptionLevel', () => {
     expect(isValidSubscriptionLevel('hobby')).toBe(false)
     expect(isValidSubscriptionLevel(null)).toBe(false)
     expect(isValidSubscriptionLevel(undefined)).toBe(false)
+  })
+})
+
+describe('isValidTeamMemberRole', () => {
+  it('accepts valid roles', () => {
+    expect(isValidTeamMemberRole('owner')).toBe(true)
+    expect(isValidTeamMemberRole('admin')).toBe(true)
+    expect(isValidTeamMemberRole('member')).toBe(true)
+  })
+
+  it('rejects invalid values', () => {
+    expect(isValidTeamMemberRole('read')).toBe(false)
+    expect(isValidTeamMemberRole('write')).toBe(false)
+    expect(isValidTeamMemberRole('')).toBe(false)
+    expect(isValidTeamMemberRole(null)).toBe(false)
+    expect(isValidTeamMemberRole(undefined)).toBe(false)
+  })
+})
+
+describe('isValidImageUrl', () => {
+  it('accepts valid absolute URLs', () => {
+    expect(isValidImageUrl('https://example.com/avatar.png')).toBe(true)
+    expect(isValidImageUrl('https://cdn.example.com/images/photo.jpg')).toBe(true)
+    expect(isValidImageUrl('http://localhost:3000/image.png')).toBe(true)
+  })
+
+  it('rejects invalid values', () => {
+    expect(isValidImageUrl('')).toBe(false)
+    expect(isValidImageUrl('not-a-url')).toBe(false)
+    expect(isValidImageUrl('/relative/path.png')).toBe(false)
+    expect(isValidImageUrl(null)).toBe(false)
+    expect(isValidImageUrl(undefined)).toBe(false)
+    expect(isValidImageUrl(123)).toBe(false)
   })
 })

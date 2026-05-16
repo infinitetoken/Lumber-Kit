@@ -57,7 +57,7 @@ export const subscriptionLevels: readonly SubscriptionLevel[] = [SubscriptionLev
 
 export type SubscriptionLimits = {
   apps: number
-  memberships: number
+  seats: number
   apiKeys: number
   logRetentionDays: number
   monthlyLogs: number
@@ -69,8 +69,8 @@ export type SubscriptionLimits = {
 
 /** Per-level resource limits. Use Infinity to mean unlimited or disabled. */
 export const subscriptionLimits: Record<SubscriptionLevel, SubscriptionLimits> = {
-  [SubscriptionLevel.Hobby]: { apps: 1, memberships: 1, apiKeys: 1, logRetentionDays: 7, monthlyLogs: 10000, realtimeLogs: false, minPushLevel: Infinity },
-  [SubscriptionLevel.Dev]: { apps: 5, memberships: 5, apiKeys: 10, logRetentionDays: 30, monthlyLogs: 250000, realtimeLogs: true, minPushLevel: LogLevel.Error },
-  [SubscriptionLevel.Pro]: { apps: 15, memberships: 15, apiKeys: 30, logRetentionDays: 90, monthlyLogs: 2000000, realtimeLogs: true, minPushLevel: LogLevel.Warn },
-  [SubscriptionLevel.Enterprise]: { apps: Infinity, memberships: Infinity, apiKeys: Infinity, logRetentionDays: Infinity, monthlyLogs: Infinity, realtimeLogs: true, minPushLevel: LogLevel.Debug }
+  [SubscriptionLevel.Hobby]: { apps: 5, seats: 1, apiKeys: 1, logRetentionDays: 7, monthlyLogs: 10000, realtimeLogs: false, minPushLevel: Infinity },
+  [SubscriptionLevel.Dev]: { apps: 10, seats: 5, apiKeys: 5, logRetentionDays: 30, monthlyLogs: 250000, realtimeLogs: true, minPushLevel: LogLevel.Error },
+  [SubscriptionLevel.Pro]: { apps: 20, seats: 20, apiKeys: 15, logRetentionDays: 90, monthlyLogs: 2000000, realtimeLogs: true, minPushLevel: LogLevel.Warn },
+  [SubscriptionLevel.Enterprise]: { apps: Infinity, seats: Infinity, apiKeys: Infinity, logRetentionDays: Infinity, monthlyLogs: Infinity, realtimeLogs: true, minPushLevel: LogLevel.Debug }
 }

@@ -32,6 +32,18 @@ export interface LogPrivate {
 }
 
 /**
+ * Encrypted note content.
+ * payload = base64(authTag + ciphertext)
+ * nonce = base64(random IV)
+ * keyVersion enables future key rotation.
+ */
+export interface NotePrivate {
+  payload: string
+  nonce: string
+  keyVersion: number
+}
+
+/**
  * API response shape for a stored log.
  */
 export interface LogRecord {
@@ -74,7 +86,8 @@ export interface AppRecord {
 
   name: string
   color?: string
-  logoUrl?: string
+  imageUrl?: string
+  teamId?: string
   encryptedKey: string | null
 }
 
@@ -84,6 +97,35 @@ export interface AppRecord {
  */
 export interface AppCreatedRecord extends AppRecord {
   apiKey?: string
+}
+
+/**
+ * An organization that owns apps and pays for member usage.
+ * Team subscriptionLevel takes precedence over individual member levels.
+ */
+export interface TeamRecord {
+  id: string
+  createdAt: string
+  updatedAt: string
+
+  name: string
+  color?: string
+  imageUrl?: string
+  subscriptionLevel: SubscriptionLevel
+}
+
+/**
+ * Membership of a user in a team.
+ */
+export interface TeamMemberRecord {
+  id: string
+  createdAt: string
+  updatedAt: string
+
+  teamId: string
+  userId: string
+
+  role: 'owner' | 'admin' | 'member'
 }
 
 /**
@@ -100,9 +142,9 @@ export interface ApiKeyRecord {
 }
 
 /**
- * App membership / authorization.
+ * External guest granted access to a specific app without being a team member.
  */
-export interface MembershipRecord {
+export interface GuestRecord {
   id: string
   createdAt: string
   updatedAt: string
@@ -111,6 +153,22 @@ export interface MembershipRecord {
   userId: string
 
   role: 'owner' | 'admin' | 'read' | 'write'
+}
+
+/**
+ * A short user-authored note, encrypted with the app key.
+ * Visible to all members of the associated app.
+ * Query by teamId in NotesQuery to build a cross-app team feed.
+ */
+export interface NoteRecord {
+  id: string
+  createdAt: string
+  updatedAt: string
+
+  appId: string
+  userId: string
+
+  private: NotePrivate
 }
 
 export interface PushToken {
@@ -142,7 +200,7 @@ export interface UserRecord {
   publicKey?: string
   appearance?: Appearance
   color?: string
-  subscriptionLevel: SubscriptionLevel
+  imageUrl?: string
   agreedToTermsVersion?: string
   notificationPreferences: NotificationPreferences
   pushTokens: PushToken[]
@@ -187,6 +245,29 @@ export interface AppsQuery {
   sort?: string
   from?: string
   to?: string
+}
+
+/**
+ * Filter params for GET /teams.
+ */
+export interface TeamsQuery {
+  limit?: number
+  cursor?: string
+  sort?: string
+}
+
+/**
+ * Filter params for GET /notes.
+ */
+export interface NotesQuery {
+  appId?: string
+  teamId?: string
+  userId?: string
+  from?: string
+  to?: string
+  sort?: string
+  limit?: number
+  cursor?: string
 }
 
 export type DeviceLinkStatus = 'pending' | 'approved' | 'denied'
