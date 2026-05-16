@@ -61,12 +61,16 @@ export type SubscriptionLimits = {
   apiKeys: number
   logRetentionDays: number
   monthlyLogs: number
+  /** Whether real-time WebSocket log streaming is available. */
+  realtimeLogs: boolean
+  /** Minimum log level that triggers a push notification. Infinity means push is disabled. */
+  minPushLevel: number
 }
 
-/** Per-level resource limits. Use Infinity to mean unlimited. */
+/** Per-level resource limits. Use Infinity to mean unlimited or disabled. */
 export const subscriptionLimits: Record<SubscriptionLevel, SubscriptionLimits> = {
-  [SubscriptionLevel.Hobby]: { apps: 1, memberships: 1, apiKeys: 1, logRetentionDays: 7, monthlyLogs: 10000 },
-  [SubscriptionLevel.Dev]: { apps: 5, memberships: 5, apiKeys: 10, logRetentionDays: 30, monthlyLogs: 250000 },
-  [SubscriptionLevel.Pro]: { apps: 15, memberships: 15, apiKeys: 30, logRetentionDays: 90, monthlyLogs: 2000000 },
-  [SubscriptionLevel.Enterprise]: { apps: Infinity, memberships: Infinity, apiKeys: Infinity, logRetentionDays: Infinity, monthlyLogs: Infinity }
+  [SubscriptionLevel.Hobby]: { apps: 1, memberships: 1, apiKeys: 1, logRetentionDays: 7, monthlyLogs: 10000, realtimeLogs: false, minPushLevel: Infinity },
+  [SubscriptionLevel.Dev]: { apps: 5, memberships: 5, apiKeys: 10, logRetentionDays: 30, monthlyLogs: 250000, realtimeLogs: true, minPushLevel: LogLevel.Error },
+  [SubscriptionLevel.Pro]: { apps: 15, memberships: 15, apiKeys: 30, logRetentionDays: 90, monthlyLogs: 2000000, realtimeLogs: true, minPushLevel: LogLevel.Warn },
+  [SubscriptionLevel.Enterprise]: { apps: Infinity, memberships: Infinity, apiKeys: Infinity, logRetentionDays: Infinity, monthlyLogs: Infinity, realtimeLogs: true, minPushLevel: LogLevel.Debug }
 }
