@@ -155,6 +155,7 @@ export interface ResponseMetadata {
   cursor?: string | null
   hasMore?: boolean
   count?: number
+  hiddenCount?: number
 }
 
 export interface ApiResponse<T> {
