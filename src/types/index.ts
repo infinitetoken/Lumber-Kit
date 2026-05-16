@@ -168,12 +168,13 @@ export interface ApiResponse<T> {
 export interface LogsQuery {
   appIds?: string[]
   levels?: LogLevel[]
+  text?: string
   flagged?: boolean
-  limit?: number
-  cursor?: string
-  sort?: string
   from?: string
   to?: string
+  sort?: string
+  limit?: number
+  cursor?: string
 }
 
 /**
