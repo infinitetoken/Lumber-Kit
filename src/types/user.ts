@@ -27,6 +27,7 @@ export interface UserRecord {
   updatedAt: string
 
   email: string
+  name?: string
   publicKey?: string
   appearance?: Appearance
   color?: string
