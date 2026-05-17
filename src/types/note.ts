@@ -22,6 +22,7 @@ export interface NoteRecord {
 
   appId: string
   userId: string
+  logId?: string
 
   private: NotePrivate
 }
