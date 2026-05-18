@@ -33,7 +33,7 @@ export interface TeamMemberRecord {
  * Filter params for GET /teams.
  */
 export interface TeamsQuery {
+  sort?: string
   limit?: number
   cursor?: string
-  sort?: string
 }

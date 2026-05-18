@@ -62,9 +62,11 @@ export interface GuestRecord {
  * Filter params for GET /apps.
  */
 export interface AppsQuery {
-  limit?: number
-  cursor?: string
-  sort?: string
+  teamId?: string
+
   from?: string
   to?: string
+  sort?: string
+  limit?: number
+  cursor?: string
 }

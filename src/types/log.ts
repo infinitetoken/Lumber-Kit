@@ -57,9 +57,13 @@ export interface LogRecord {
  */
 export interface LogsQuery {
   appIds?: string[]
+  requestId?: string
+  traceId?: string
+
   levels?: LogLevel[]
   text?: string
   flagged?: boolean
+
   from?: string
   to?: string
   sort?: string
