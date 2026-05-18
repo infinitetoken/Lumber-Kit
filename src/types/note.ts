@@ -31,9 +31,9 @@ export interface NoteRecord {
  * Filter params for GET /notes.
  */
 export interface NotesQuery {
-  appId: string
+  appId?: string
   teamId?: string
-  userId: string
+  userId?: string
   logId?: string
 
   from?: string
