@@ -36,10 +36,3 @@ export interface UserRecord {
   notificationPreferences: NotificationPreferences
   pushTokens: PushToken[]
 }
-
-/**
- * Authenticated user returned from GET /me — UserRecord plus subscription context.
- */
-export interface MeResponse extends UserRecord {
-  subscriptionLevel: number
-}
