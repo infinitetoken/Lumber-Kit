@@ -2,9 +2,25 @@
   "name": "@infinitetoken/lumber-kit",
   "version": "0.4.18",
   "description": "Shared TypeScript types and wire format contracts for the Lumber cloud logging suite",
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/cjs/index.d.ts",
+  "keywords": [
+    "lumber",
+    "logging",
+    "cloud-logging",
+    "typescript",
+    "types",
+    "wire-format",
+    "contracts",
+    "schema",
+    "log-schema"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/infinitetoken/lumber-kit.git"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "author": "Jay Deaton",
+  "sideEffects": false,
+  "type": "commonjs",
   "exports": {
     ".": {
       "import": {
@@ -17,40 +33,44 @@
       }
     }
   },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/cjs/index.d.ts",
   "files": [
-    "dist",
-    "README.md"
+    "dist"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
     "build": "npm run build:cjs && npm run build:esm",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json && echo '{\"type\": \"module\"}' > dist/esm/package.json && node scripts/fix-esm-imports.mjs",
     "clean": "rm -rf dist coverage",
-    "test": "jest",
-    "lint": "eslint .",
     "fix": "eslint . --fix",
-    "preversion": "npm run lint && npm test",
+    "lint": "eslint .",
     "prepublishOnly": "npm run build",
     "release": "git push --follow-tags",
-    "release:patch": "npm version patch && git push --follow-tags",
+    "release:major": "npm version major && git push --follow-tags",
     "release:minor": "npm version minor && git push --follow-tags",
-    "release:major": "npm version major && git push --follow-tags"
+    "release:patch": "npm version patch && git push --follow-tags",
+    "test": "jest",
+    "typecheck": "tsc --noEmit",
+    "preversion": "npm run lint && npm test"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^25.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.59.1",
     "@typescript-eslint/parser": "^8.59.1",
     "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-package-json": "^1.0.0",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-simple-import-sort": "^13.0.0",
     "jest": "^30.3.0",
     "prettier": "^3.8.3",
     "ts-jest": "^29.4.9",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
