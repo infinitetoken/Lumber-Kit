@@ -1,5 +1,6 @@
 export * from './app'
 export * from './deviceLink'
+export * from './flag'
 export * from './log'
 export * from './note'
 export * from './response'

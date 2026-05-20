@@ -11,37 +11,87 @@ npm install @infinitetoken/lumber-kit
 ## Usage
 
 ```typescript
-import { LogLevel, LogRecord, EncryptedPayload, LogQuery } from '@infinitetoken/lumber-kit'
+import { LogLevel, LogRecord, LogEncrypted, LogPayload, LogsQuery } from '@infinitetoken/lumber-kit'
 ```
 
 ## Exports
 
+### Log types
+
 | Export | Kind | Purpose |
 |--------|------|---------|
 | `LogLevel` | `const enum` | Log severity: Debug=0 Info=1 Warn=2 Error=3 Fatal=4 |
-| `SubscriptionLevel` | `const enum` | User tier: Hobby=0 Dev=1 Pro=2 |
-| `LogPayload` | interface | Plaintext fields before encryption |
-| `EncryptedPayload` | interface | Wire format: `{ payload: string, v: number }` |
 | `LogRecord` | interface | API response shape for a stored log |
-| `AppRecord` | interface | API response shape for an app (no encryption_key) |
-| `AppCreatedRecord` | interface | POST /apps 201 response only (includes encryption_key once) |
-| `UserRecord` | interface | API response shape for a user (no password_digest) |
-| `LogQuery` | interface | GET /logs filter params |
-| `AppQuery` | interface | GET /apps filter params |
+| `LogEncrypted` | interface | Encrypted envelope: `{ nonce, payload, keyVersion }` |
+| `LogPayload` | interface | Plaintext shape encrypted into `LogEncrypted` (client-side only) |
+| `LogContext` | interface | Structured context fields (code location, custom fields) |
+| `LogsQuery` | interface | Sync-protocol params for GET /logs |
 
-## Wire Format
+### Subscription types
 
-`EncryptedPayload.payload` is `base64(IV[12 bytes] + AuthTag[16 bytes] + ciphertext)`.
+| Export | Kind | Purpose |
+|--------|------|---------|
+| `SubscriptionLevel` | `const enum` | Team tier: Hobby=0 Dev=1 Pro=2 Enterprise=3 |
+| `subscriptionLevelToName` | object | Maps `SubscriptionLevel` to `'hobby' \| 'dev' \| 'pro' \| 'enterprise'` |
+| `subscriptionLimits` | object | Per-tier limits (apps, seats, apiKeys, logRetentionDays, etc.) |
+| `isValidSubscriptionLevel` | function | Type guard for `SubscriptionLevel` values |
 
-The `v` field is always `1` for the current wire format. Changes to this format are semver major.
+### Flag types
 
-## const enum and Babel Consumers
+| Export | Kind | Purpose |
+|--------|------|---------|
+| `FlagRecord` | interface | A user flag on a log: `{ id, createdAt, updatedAt, logId, userId }` |
+| `FlagsQuery` | interface | Sync-protocol params for GET /flags |
+
+### App / User / Team types
+
+| Export | Kind | Purpose |
+|--------|------|---------|
+| `AppRecord` | interface | API response shape for an app |
+| `AppCreatedRecord` | interface | POST /apps 201 response (includes `encryptedKey` once) |
+| `UserRecord` | interface | API response shape for a user |
+| `TeamRecord` | interface | API response shape for a team |
+| `TeamMemberRecord` | interface | Team membership record |
+
+## Wire format
+
+All log content is E2E encrypted before leaving the client. `LogRecord` contains only:
+
+```typescript
+{
+  id:        string        // server-assigned
+  createdAt: string        // ISO 8601
+  updatedAt: string        // ISO 8601
+  appId:     string
+  encrypted: LogEncrypted  // opaque blob — server cannot read this
+}
+```
+
+`LogEncrypted` uses AES-256-GCM:
+- `nonce` — base64(random IV, 12 bytes)
+- `payload` — base64(authTag[16 bytes] + ciphertext)
+- `keyVersion` — always `1` for the current format; changes are semver major
+
+The plaintext shape inside `payload` is `LogPayload`:
+
+```typescript
+{
+  level:      LogLevel
+  message:    string
+  requestId?: string
+  traceId?:   string
+  context?:   LogContext
+  metadata?:  Record<string, unknown>
+}
+```
+
+## const enum and Babel consumers
 
 `LogLevel` is a TypeScript `const enum`. TypeScript consumers have values inlined at compile time (zero runtime overhead).
 
-If your project uses Babel, esbuild, or `isolatedModules: true`, the runtime enum object is available because Lumber-Kit is compiled with `preserveConstEnums: true`. No special configuration is needed in your project.
+If your project uses Babel, esbuild, or `isolatedModules: true`, the runtime enum object is available because Lumber-Kit is compiled with `preserveConstEnums: true`. No special configuration is needed.
 
-## Local Development (yalc)
+## Local development (yalc)
 
 Do NOT use `npm link` — it creates symlinks that break Metro in the Expo client.
 

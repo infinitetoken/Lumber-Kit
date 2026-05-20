@@ -4,9 +4,6 @@ import { LogLevel } from '../constants'
  * Structured log context content.
  */
 export interface LogContext {
-  requestId?: string
-  traceId?: string
-
   code?: string
   method?: string
   line?: number
@@ -18,52 +15,48 @@ export interface LogContext {
 }
 
 /**
- * Encrypted private container.
+ * Encrypted envelope stored on the server.
  * payload = base64(authTag + ciphertext)
  * nonce = base64(random IV)
  * keyVersion enables future rotation support.
  */
-export interface LogPrivate {
-  payload: string
+export interface LogEncrypted {
   nonce: string
+  payload: string
   keyVersion: number
 }
 
 /**
+ * Plaintext shape of log content — encrypted before sending, never stored plaintext on server.
+ */
+export interface LogPayload {
+  level: LogLevel
+  message: string
+  requestId?: string
+  traceId?: string
+  context?: LogContext
+  metadata?: Record<string, unknown>
+}
+
+/**
  * API response shape for a stored log.
+ * level is plaintext for server-side notification routing; all content is inside encrypted.
  */
 export interface LogRecord {
   id: string
   createdAt: string
   updatedAt: string
-
   appId: string
-  requestId?: string
-  traceId?: string
-
   level: LogLevel
-  message: string
-
-  flagged: boolean
-
-  context?: LogContext
-  metadata?: Record<string, unknown>
-
-  private?: LogPrivate
+  encrypted: LogEncrypted
 }
 
 /**
- * Filter params for GET /logs.
+ * Sync-protocol params for GET /logs.
  */
 export interface LogsQuery {
   appIds?: string[]
-  requestId?: string
-  traceId?: string
-
-  levels?: LogLevel[]
-  text?: string
-  flagged?: boolean
-
+  levels?: number[]
   from?: string
   to?: string
   sort?: string
