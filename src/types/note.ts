@@ -4,7 +4,7 @@
  * nonce = base64(random IV)
  * keyVersion enables future key rotation.
  */
-export interface NotePrivate {
+export interface NoteEncrypted {
   payload: string
   nonce: string
   keyVersion: number
@@ -24,7 +24,7 @@ export interface NoteRecord {
   userId: string
   logId?: string
 
-  private: NotePrivate
+  encrypted: NoteEncrypted
 }
 
 /**
