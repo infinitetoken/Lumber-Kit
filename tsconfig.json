@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "commonjs",
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "ignoreDeprecations": "6.0",
     "skipLibCheck": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
