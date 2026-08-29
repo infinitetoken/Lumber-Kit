@@ -3,7 +3,6 @@ import path from 'path'
 
 const distPath = path.resolve(__dirname, '../../dist/cjs/index.js')
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any
 const kit: any = fs.existsSync(distPath) ? require(distPath) : null
 const t = kit != null ? it : it.skip
 
