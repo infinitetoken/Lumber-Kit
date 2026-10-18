@@ -56,9 +56,9 @@
   },
   "prettier": "@infinitetoken/eslint-config/prettier",
   "devDependencies": {
-    "@infinitetoken/eslint-config": "^0.1.6",
-    "@infinitetoken/jest-config": "^0.1.3",
-    "@infinitetoken/tsconfig": "^0.3.0",
+    "@infinitetoken/eslint-config": "^0.2.1",
+    "@infinitetoken/jest-config": "^0.5.2",
+    "@infinitetoken/tsconfig": "^0.6.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.0.0",
     "eslint": "^10.2.1",
