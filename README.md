@@ -53,6 +53,15 @@ import { LogLevel, LogRecord, LogEncrypted, LogPayload, LogsQuery } from '@infin
 | `TeamRecord` | interface | API response shape for a team |
 | `TeamMemberRecord` | interface | Team membership record |
 
+### API keys
+
+| Export | Kind | Purpose |
+|--------|------|---------|
+| `joinApiKey` | function | Joins an app's API token and its encryption key as `<token>.<encryptionKey>`, the one secret a plugin is configured with |
+| `splitApiKey` | function | Splits an API key into `{ token, encryptionKey? }`; a bare token, as keys were before they were joined, has no encryption key |
+
+A plugin sends only the token to the API (`Authorization: Bearer <token>`) and encrypts with the rest, so the encryption key never leaves it.
+
 ## Wire format
 
 All log content is E2E encrypted before leaving the client. `LogRecord` contains only:

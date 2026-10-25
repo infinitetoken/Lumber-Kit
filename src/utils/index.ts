@@ -30,3 +30,18 @@ export const isValidImageUrl = (value: unknown): value is string => {
     return false
   }
 }
+
+/**
+ * The API key the Lumber app hands out: an app's API token and its encryption key, joined as `<token>.<encryptionKey>`,
+ * so a plugin is configured with one secret. A plugin sends only the token to the API (`Authorization: Bearer <token>`)
+ * and encrypts with the rest, so the encryption key never leaves it. Neither half can contain a `.` (hex and base64).
+ */
+export const joinApiKey = (token: string, encryptionKey: string): string => `${token}.${encryptionKey}`
+
+/** Splits an API key into its token and encryption key. A bare token, as keys were before they were joined, has no encryption key. */
+export const splitApiKey = (apiKey: string): { token: string; encryptionKey?: string } => {
+  const value = apiKey.trim()
+  const dot = value.indexOf('.')
+  if (dot === -1) return { token: value }
+  return { token: value.slice(0, dot), encryptionKey: value.slice(dot + 1) }
+}

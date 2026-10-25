@@ -1,4 +1,4 @@
-import { isValidAppearance, isValidColor, isValidImageUrl, isValidLogLevel, isValidSubscriptionLevel, isValidTeamMemberRole, LogLevel, SubscriptionLevel } from '../index'
+import { isValidAppearance, isValidColor, isValidImageUrl, isValidLogLevel, isValidSubscriptionLevel, isValidTeamMemberRole, joinApiKey, LogLevel, splitApiKey, SubscriptionLevel } from '../index'
 
 describe('isValidAppearance', () => {
   it('accepts valid values', () => {
@@ -113,5 +113,26 @@ describe('isValidImageUrl', () => {
     expect(isValidImageUrl(null)).toBe(false)
     expect(isValidImageUrl(undefined)).toBe(false)
     expect(isValidImageUrl(123)).toBe(false)
+  })
+})
+
+describe('joinApiKey and splitApiKey', () => {
+  const token = '0123456789abcdef0123456789abcdef'
+  const encryptionKey = 'q83vEjRWeJCrze8SNFZ4kKvN7xI0VniQq83vEjRWeJA='
+
+  it('joins a token and an encryption key with a dot', () => {
+    expect(joinApiKey(token, encryptionKey)).toBe(`${token}.${encryptionKey}`)
+  })
+
+  it('splits a joined key back into its halves', () => {
+    expect(splitApiKey(joinApiKey(token, encryptionKey))).toEqual({ token, encryptionKey })
+  })
+
+  it('reads a bare token as a key with no encryption key', () => {
+    expect(splitApiKey(token)).toEqual({ token })
+  })
+
+  it('ignores surrounding whitespace, as from an env file', () => {
+    expect(splitApiKey(`  ${token}.${encryptionKey}\n`)).toEqual({ token, encryptionKey })
   })
 })
