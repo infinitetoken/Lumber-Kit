@@ -1,6 +1,6 @@
 {
   "name": "@infinitetoken/lumber-kit",
-  "version": "0.4.22",
+  "version": "0.4.23",
   "description": "Shared TypeScript types and wire format contracts for the Lumber cloud logging suite",
   "keywords": [
     "lumber",
