@@ -38,7 +38,7 @@ export const isValidImageUrl = (value: unknown): value is string => {
  */
 export const joinApiKey = (token: string, encryptionKey: string): string => `${token}.${encryptionKey}`
 
-/** Splits an API key into its token and encryption key. A bare token, as keys were before they were joined, has no encryption key. */
+/** Splits an API key into its token and encryption key. A value with no dot is all token. */
 export const splitApiKey = (apiKey: string): { token: string; encryptionKey?: string } => {
   const value = apiKey.trim()
   const dot = value.indexOf('.')
