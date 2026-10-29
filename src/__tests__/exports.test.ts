@@ -1,4 +1,4 @@
-import { apiErrorCodeOf, isApiErrorCode, isValidAppearance, isValidColor, isValidImageUrl, isValidLogLevel, isValidSubscriptionLevel, isValidTeamMemberRole, joinApiKey, LogLevel, normalizePushThreshold, parsePushData, PUSH_OFF, splitApiKey, SubscriptionLevel, subscriptionLevels, subscriptionPlans } from '../index'
+import { apiErrorCodeOf, APP_COLORS, DEFAULT_ACCENT, isApiErrorCode, isValidAppearance, isValidColor, isValidImageUrl, isValidLogLevel, isValidSubscriptionLevel, isValidTeamMemberRole, joinApiKey, LogLevel, logLevelColors, nameColor, normalizePushThreshold, parsePushData, personColor, PUSH_OFF, resolveAppColor, splitApiKey, SubscriptionLevel, subscriptionLevels, subscriptionPlans } from '../index'
 
 describe('isValidAppearance', () => {
   it('accepts valid values', () => {
@@ -31,6 +31,33 @@ describe('isValidColor', () => {
     expect(isValidColor('#1234567')).toBe(false)
     expect(isValidColor('')).toBe(false)
     expect(isValidColor('ffffff')).toBe(false)
+  })
+})
+
+describe('colors', () => {
+  // The apps derived these before the hash moved here; a change would recolor every app without a color of its own
+  it('derives the same color from a name on every device', () => {
+    expect(nameColor('Lumber-Test')).toBe('#8B5CF6')
+    expect(nameColor('CashierFu')).toBe('#84CC16')
+    expect(nameColor('Billing')).toBe('#22C55E')
+    expect(nameColor(' web ')).toBe(nameColor('Web'))
+    expect(APP_COLORS).toContain(nameColor('anything at all'))
+  })
+
+  it("uses an app's own color, or its name's", () => {
+    expect(resolveAppColor('Lumber-Test', '#123456')).toBe('#123456')
+    expect(resolveAppColor('Lumber-Test', null)).toBe('#8B5CF6')
+    expect(resolveAppColor('Lumber-Test', 'not a color')).toBe('#8B5CF6')
+  })
+
+  it("derives a person's color from their id", () => {
+    expect(personColor('f01a5b9c-d4d1-4734-bce0-13ee740acd25')).toBe('#EC4899')
+  })
+
+  it('keeps the level colors and the default accent', () => {
+    expect(logLevelColors[LogLevel.Error]).toBe('#F87171')
+    expect(logLevelColors[LogLevel.Fatal]).toBe('#E879F9')
+    expect(DEFAULT_ACCENT).toBe('#FBBF24')
   })
 })
 

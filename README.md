@@ -101,6 +101,17 @@ import { LogLevel, LogRecord, LogEncrypted, LogPayload, LogsQuery } from '@infin
 | `KeyPin` | interface | An account key a user accepted for someone, with its MAC |
 | `HolderKeyCheck`, `ClaimantKeyCheck`, `KeyCheckResult` | interfaces | A key check as the holder and the person being confirmed read it |
 
+### Colors
+
+| Export | Kind | Purpose |
+|--------|------|---------|
+| `logLevelColors` | object | Each `LogLevel`'s color, as the apps and the CLI draw it |
+| `DEFAULT_ACCENT` | constant | The accent until someone picks their own (their account's `color`): amber `#FBBF24` |
+| `APP_COLORS` | array | The twelve colors `nameColor` picks from |
+| `nameColor` | function | A stable color for a name, ignoring case and surrounding spaces, the same on every device |
+| `resolveAppColor` | function | An app's own color, or its name's |
+| `personColor` | function | Someone else's color, from their user id |
+
 ### API keys
 
 | Export | Kind | Purpose |

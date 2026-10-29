@@ -1,4 +1,4 @@
-import { type ApiErrorCode, apiErrorCodes, DEFAULT_PUSH_THRESHOLD, LogLevel, logLevels, PUSH_OFF, type PushThreshold, SubscriptionLevel, subscriptionLevels } from '../constants'
+import { type ApiErrorCode, apiErrorCodes, APP_COLORS, DEFAULT_PUSH_THRESHOLD, LogLevel, logLevels, PUSH_OFF, type PushThreshold, SubscriptionLevel, subscriptionLevels } from '../constants'
 import { Appearance, DeviceLinkStatus, PushData, TeamMemberRecord } from '../types'
 
 const appearanceValues: Appearance[] = ['system', 'dark', 'light']
@@ -7,6 +7,28 @@ export const isValidAppearance = (value: unknown): value is Appearance => appear
 
 /** Accepts 3- and 6-digit hex color strings (#rgb, #rrggbb). */
 export const isValidColor = (value: string): boolean => /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(value)
+
+// FNV-1a: a fast, well-spread string hash, so similar names still land on different colors
+const hashName = (name: string): number => {
+  let hash = 0x811c9dc5
+  for (const char of name.trim().toLowerCase()) {
+    hash ^= char.codePointAt(0) ?? 0
+    hash = Math.imul(hash, 0x01000193)
+  }
+  return hash >>> 0
+}
+
+/**
+ * One of APP_COLORS for a name, ignoring case and surrounding spaces. Nothing is stored: every device works out the
+ * same color.
+ */
+export const nameColor = (name: string): string => APP_COLORS[hashName(name) % APP_COLORS.length]
+
+/** An app's color: the one its owner picked, or its name's. */
+export const resolveAppColor = (name: string, color?: string | null): string => (color && isValidColor(color) ? color : nameColor(name))
+
+/** Someone else's color, from their user id, since their own accent lives on their account. */
+export const personColor = (userId: string): string => nameColor(userId)
 
 export const isValidLogLevel = (value: unknown): value is LogLevel => (logLevels as readonly unknown[]).includes(value)
 
