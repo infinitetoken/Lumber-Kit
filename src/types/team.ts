@@ -13,6 +13,17 @@ export interface TeamRecord {
   color?: string
   imageUrl?: string
   subscriptionLevel: SubscriptionLevel
+  /** When a canceled plan stops; null while it renews. */
+  subscriptionEnd?: string | null
+
+  /** GET /teams only: the caller's role on the team. */
+  role?: TeamMemberRecord['role']
+  /** GET /teams only: the caller's membership id, which leaving the team deletes. */
+  memberId?: string
+  /** GET /teams only: the team's apps, as creating one counts them. Null unless the caller is its owner or an admin. */
+  appCount?: number | null
+  /** GET /teams only: logs its apps sent this UTC month, the monthly cap's count. Null unless owner or admin. */
+  logsThisMonth?: number | null
 }
 
 /**
@@ -27,6 +38,21 @@ export interface TeamMemberRecord {
   userId: string
 
   role: 'owner' | 'admin' | 'member'
+
+  /** Listed members only: their display name. Never their email address. */
+  name?: string | null
+  /** Listed members only: the part of their email before the @. */
+  handle?: string | null
+  color?: string | null
+  imageUrl?: string | null
+}
+
+/**
+ * A plan GET /subscriptions offers, with its Stripe price (none for Hobby).
+ */
+export interface SubscriptionPlanRecord {
+  name: string
+  priceId: string | null
 }
 
 /**

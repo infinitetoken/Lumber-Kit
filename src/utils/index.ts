@@ -1,5 +1,5 @@
-import { LogLevel, logLevels, SubscriptionLevel, subscriptionLevels } from '../constants'
-import { Appearance, DeviceLinkStatus, TeamMemberRecord } from '../types'
+import { type ApiErrorCode, apiErrorCodes, DEFAULT_PUSH_THRESHOLD, LogLevel, logLevels, PUSH_OFF, type PushThreshold, SubscriptionLevel, subscriptionLevels } from '../constants'
+import { Appearance, DeviceLinkStatus, PushData, TeamMemberRecord } from '../types'
 
 const appearanceValues: Appearance[] = ['system', 'dark', 'light']
 
@@ -44,4 +44,48 @@ export const splitApiKey = (apiKey: string): { token: string; encryptionKey?: st
   const dot = value.indexOf('.')
   if (dot === -1) return { token: value }
   return { token: value.slice(0, dot), encryptionKey: value.slice(dot + 1) }
+}
+
+/**
+ * A push threshold from a stored or sent preference: a log level, or PUSH_OFF for anything past Fatal. Below Debug is
+ * Debug, a fraction rounds, and anything that isn't a finite number is the default (Warn).
+ */
+export const normalizePushThreshold = (value: unknown): PushThreshold => {
+  const level = typeof value === 'number' ? value : typeof value === 'string' && value.trim() !== '' ? Number(value) : NaN
+  if (!Number.isFinite(level)) return DEFAULT_PUSH_THRESHOLD
+  if (level > LogLevel.Fatal) return PUSH_OFF
+  if (level <= LogLevel.Debug) return LogLevel.Debug
+  return Math.round(level) as PushThreshold
+}
+
+export const isApiErrorCode = (value: unknown): value is ApiErrorCode => (apiErrorCodes as readonly unknown[]).includes(value)
+
+/** The code in an API error response's body, or null when it has none. */
+export const apiErrorCodeOf = (body: unknown): ApiErrorCode | null => {
+  const code = body && typeof body === 'object' ? (body as { code?: unknown }).code : undefined
+  return isApiErrorCode(code) ? code : null
+}
+
+const isId = (value: unknown): value is string => typeof value === 'string' && value.length > 0
+
+/** A push notification's data as PushData, or null for data no Lumber push sends. */
+export const parsePushData = (data: unknown): PushData | null => {
+  if (!data || typeof data !== 'object') return null
+  const d = data as Record<string, unknown>
+  switch (d.type) {
+    case 'log':
+      return isId(d.appId) && isId(d.logId) ? { type: 'log', appId: d.appId, logId: d.logId, level: String(d.level ?? '') } : null
+    case 'note':
+      return isId(d.appId) && isId(d.noteId) ? { type: 'note', appId: d.appId, noteId: d.noteId } : null
+    case 'device_link':
+      return isId(d.deviceLinkId) ? { type: 'device_link', deviceLinkId: d.deviceLinkId, deviceName: typeof d.deviceName === 'string' ? d.deviceName : '' } : null
+    case 'key_check':
+      return isId(d.checkId) ? { type: 'key_check', checkId: d.checkId } : null
+    case 'key_waiting':
+      return isId(d.userId) ? { type: 'key_waiting', userId: d.userId } : null
+    case 'keys_shared':
+      return isId(d.appId) ? { type: 'keys_shared', appId: d.appId } : { type: 'keys_shared' }
+    default:
+      return null
+  }
 }

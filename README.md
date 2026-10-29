@@ -36,6 +36,40 @@ import { LogLevel, LogRecord, LogEncrypted, LogPayload, LogsQuery } from '@infin
 | `subscriptionLimits` | object | Per-tier limits (apps, seats, apiKeys, logRetentionDays, etc.) |
 | `isValidSubscriptionLevel` | function | Type guard for `SubscriptionLevel` values |
 
+### Plans
+
+| Export | Kind | Purpose |
+|--------|------|---------|
+| `subscriptionPlans` | object | Per-tier display name and monthly price in US dollars (0 free, `null` priced per customer) |
+| `SubscriptionPlanRecord` | interface | A plan GET /subscriptions offers, with its Stripe price id |
+
+### Notifications
+
+| Export | Kind | Purpose |
+|--------|------|---------|
+| `PUSH_OFF` | constant | A push threshold one past Fatal (5): log pushes off |
+| `PushThreshold` | type | A `LogLevel` or `PUSH_OFF`, stored as a preference's `minimumLevel` |
+| `normalizePushThreshold` | function | A threshold from any stored or sent value: past Fatal is off, not a number is Warn |
+| `PushData` | type | The `data` each push type carries (`log`, `note`, `device_link`, `key_check`, `key_waiting`, `keys_shared`) |
+| `parsePushData` | function | A push's data as `PushData`, or `null` for data no Lumber push sends |
+
+### Socket events
+
+| Export | Kind | Purpose |
+|--------|------|---------|
+| `ServerToClientEvents` | interface | Every event Lumber-Socket sends, for socket.io's typed `Server` and `Socket` |
+| `ClientToServerEvents` | interface | Every event a client sends Lumber-Socket |
+| `SocketAppPayload` | type | An app as the socket sends it (no wrapped keys) |
+
+### Errors
+
+| Export | Kind | Purpose |
+|--------|------|---------|
+| `ApiErrorCode` | type | Why the API refused, where the status alone doesn't say (`SEAT_LIMIT`, `ALREADY_MEMBER`, ...) |
+| `apiErrorCodes` | array | Every `ApiErrorCode` |
+| `ApiErrorBody` | interface | An error response's body: `{ message, code? }` |
+| `apiErrorCodeOf` | function | The code in an error body, or `null` |
+
 ### Flag types
 
 | Export | Kind | Purpose |
@@ -51,7 +85,21 @@ import { LogLevel, LogRecord, LogEncrypted, LogPayload, LogsQuery } from '@infin
 | `AppCreatedRecord` | interface | POST /apps 201 response (includes `encryptedKey` once) |
 | `UserRecord` | interface | API response shape for a user |
 | `TeamRecord` | interface | API response shape for a team |
-| `TeamMemberRecord` | interface | Team membership record |
+| `TeamMemberRecord` | interface | Team membership record (listed members carry name, handle, color and picture) |
+| `AppTeamAccess` | type | Who on an app's team reads it: `'everyone'` or `'owner'` |
+| `AppPermission` | type | `'read' \| 'write' \| 'manage'` on an app |
+| `AppPersonRecord` | interface | Someone who can read an app, as GET /apps/:id/people shows them |
+| `InvitationRecord` | interface | An invitation to an address with no account, to a team or an app |
+
+### Key sharing
+
+| Export | Kind | Purpose |
+|--------|------|---------|
+| `PendingAppKey` | interface | Someone with access to an app and no wrapped copy of its key |
+| `KeyHolder` | interface | Someone who already holds a wrapped copy |
+| `AppKeyUpsertBody` | interface | Body of PUT /apps/:id/keys/:userId |
+| `KeyPin` | interface | An account key a user accepted for someone, with its MAC |
+| `HolderKeyCheck`, `ClaimantKeyCheck`, `KeyCheckResult` | interfaces | A key check as the holder and the person being confirmed read it |
 
 ### API keys
 

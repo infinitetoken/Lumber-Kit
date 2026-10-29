@@ -1,4 +1,4 @@
-import { isValidAppearance, isValidColor, isValidImageUrl, isValidLogLevel, isValidSubscriptionLevel, isValidTeamMemberRole, joinApiKey, LogLevel, splitApiKey, SubscriptionLevel } from '../index'
+import { apiErrorCodeOf, isApiErrorCode, isValidAppearance, isValidColor, isValidImageUrl, isValidLogLevel, isValidSubscriptionLevel, isValidTeamMemberRole, joinApiKey, LogLevel, normalizePushThreshold, parsePushData, PUSH_OFF, splitApiKey, SubscriptionLevel, subscriptionLevels, subscriptionPlans } from '../index'
 
 describe('isValidAppearance', () => {
   it('accepts valid values', () => {
@@ -134,5 +134,91 @@ describe('joinApiKey and splitApiKey', () => {
 
   it('ignores surrounding whitespace, as from an env file', () => {
     expect(splitApiKey(`  ${token}.${encryptionKey}\n`)).toEqual({ token, encryptionKey })
+  })
+})
+
+describe('normalizePushThreshold', () => {
+  it('keeps log levels', () => {
+    expect(normalizePushThreshold(LogLevel.Debug)).toBe(LogLevel.Debug)
+    expect(normalizePushThreshold(LogLevel.Error)).toBe(LogLevel.Error)
+    expect(normalizePushThreshold(LogLevel.Fatal)).toBe(LogLevel.Fatal)
+  })
+
+  it('turns anything past Fatal into PUSH_OFF', () => {
+    expect(PUSH_OFF).toBe(5)
+    expect(normalizePushThreshold(PUSH_OFF)).toBe(PUSH_OFF)
+    expect(normalizePushThreshold(9)).toBe(PUSH_OFF)
+    expect(normalizePushThreshold(4.4)).toBe(PUSH_OFF)
+  })
+
+  it('clamps below Debug and rounds fractions', () => {
+    expect(normalizePushThreshold(-3)).toBe(LogLevel.Debug)
+    expect(normalizePushThreshold(2.6)).toBe(LogLevel.Error)
+  })
+
+  it('reads numeric strings, as a JSON body can send them', () => {
+    expect(normalizePushThreshold('3')).toBe(LogLevel.Error)
+    expect(normalizePushThreshold('5')).toBe(PUSH_OFF)
+  })
+
+  it('gives Warn for anything that is not a finite number', () => {
+    expect(normalizePushThreshold(undefined)).toBe(LogLevel.Warn)
+    expect(normalizePushThreshold(null)).toBe(LogLevel.Warn)
+    expect(normalizePushThreshold('')).toBe(LogLevel.Warn)
+    expect(normalizePushThreshold('high')).toBe(LogLevel.Warn)
+    expect(normalizePushThreshold(NaN)).toBe(LogLevel.Warn)
+    expect(normalizePushThreshold(Infinity)).toBe(LogLevel.Warn)
+  })
+})
+
+describe('subscriptionPlans', () => {
+  it('names and prices every level', () => {
+    expect(subscriptionLevels.map((level) => subscriptionPlans[level].name)).toEqual(['Hobby', 'Dev', 'Pro', 'Enterprise'])
+    expect(subscriptionPlans[SubscriptionLevel.Hobby].monthlyPrice).toBe(0)
+    expect(subscriptionPlans[SubscriptionLevel.Dev].monthlyPrice).toBe(9)
+    expect(subscriptionPlans[SubscriptionLevel.Pro].monthlyPrice).toBe(39)
+    expect(subscriptionPlans[SubscriptionLevel.Enterprise].monthlyPrice).toBeNull()
+  })
+})
+
+describe('API error codes', () => {
+  it('recognizes its codes', () => {
+    expect(isApiErrorCode('SEAT_LIMIT')).toBe(true)
+    expect(isApiErrorCode('HAS_ACCOUNT')).toBe(true)
+    expect(isApiErrorCode('23505')).toBe(false)
+    expect(isApiErrorCode(undefined)).toBe(false)
+  })
+
+  it('reads the code from an error body', () => {
+    expect(apiErrorCodeOf({ message: 'Seat limit reached', code: 'SEAT_LIMIT' })).toBe('SEAT_LIMIT')
+    expect(apiErrorCodeOf({ message: 'Seat limit reached' })).toBeNull()
+    expect(apiErrorCodeOf({ message: 'Resource already exists', code: '23505' })).toBeNull()
+    expect(apiErrorCodeOf(null)).toBeNull()
+    expect(apiErrorCodeOf('SEAT_LIMIT')).toBeNull()
+  })
+})
+
+describe('parsePushData', () => {
+  it('reads each push type', () => {
+    expect(parsePushData({ type: 'log', appId: 'a', logId: 'l', level: '3' })).toEqual({ type: 'log', appId: 'a', logId: 'l', level: '3' })
+    expect(parsePushData({ type: 'note', appId: 'a', noteId: 'n' })).toEqual({ type: 'note', appId: 'a', noteId: 'n' })
+    expect(parsePushData({ type: 'device_link', deviceLinkId: 'd', deviceName: 'iPad' })).toEqual({ type: 'device_link', deviceLinkId: 'd', deviceName: 'iPad' })
+    expect(parsePushData({ type: 'key_check', checkId: 'c' })).toEqual({ type: 'key_check', checkId: 'c' })
+    expect(parsePushData({ type: 'key_waiting', userId: 'u' })).toEqual({ type: 'key_waiting', userId: 'u' })
+    expect(parsePushData({ type: 'keys_shared', appId: 'a' })).toEqual({ type: 'keys_shared', appId: 'a' })
+    expect(parsePushData({ type: 'keys_shared' })).toEqual({ type: 'keys_shared' })
+  })
+
+  it('drops extra fields', () => {
+    expect(parsePushData({ type: 'note', appId: 'a', noteId: 'n', title: 'x' })).toEqual({ type: 'note', appId: 'a', noteId: 'n' })
+  })
+
+  it('refuses data missing what its type needs, or of no known type', () => {
+    expect(parsePushData({ type: 'log', appId: 'a' })).toBeNull()
+    expect(parsePushData({ type: 'note', appId: '', noteId: 'n' })).toBeNull()
+    expect(parsePushData({ type: 'key_check' })).toBeNull()
+    expect(parsePushData({ type: 'other', appId: 'a' })).toBeNull()
+    expect(parsePushData(null)).toBeNull()
+    expect(parsePushData('log')).toBeNull()
   })
 })

@@ -43,3 +43,18 @@ export const subscriptionLimits: Record<SubscriptionLevel, SubscriptionLimits> =
   [SubscriptionLevel.Pro]: { apps: 20, seats: 20, apiKeys: 15, logRetentionDays: 90, monthlyLogs: 2000000, realtimeLogs: true, minPushLevel: LogLevel.Warn },
   [SubscriptionLevel.Enterprise]: { apps: Infinity, seats: Infinity, apiKeys: Infinity, logRetentionDays: Infinity, monthlyLogs: Infinity, realtimeLogs: true, minPushLevel: LogLevel.Debug }
 }
+
+export type SubscriptionPlan = {
+  /** Display name, as every surface shows it. */
+  name: string
+  /** Monthly price in US dollars: 0 for free, null when priced per customer. */
+  monthlyPrice: number | null
+}
+
+/** Each level's name and price. Stripe holds the prices themselves; these must match what it charges. */
+export const subscriptionPlans: Record<SubscriptionLevel, SubscriptionPlan> = {
+  [SubscriptionLevel.Hobby]: { name: 'Hobby', monthlyPrice: 0 },
+  [SubscriptionLevel.Dev]: { name: 'Dev', monthlyPrice: 9 },
+  [SubscriptionLevel.Pro]: { name: 'Pro', monthlyPrice: 39 },
+  [SubscriptionLevel.Enterprise]: { name: 'Enterprise', monthlyPrice: null }
+}
