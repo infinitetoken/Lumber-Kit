@@ -11,6 +11,8 @@ export interface PushToken {
 export interface NotificationPreference {
   enabled?: boolean
   minimumLevel?: number
+  /** Whether new notes on this app push, over the account's `notes`; missing follows the account's. */
+  notes?: boolean
   lastReadAt?: string
 }
 
