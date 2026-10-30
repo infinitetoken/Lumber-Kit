@@ -34,7 +34,7 @@ export const isValidLogLevel = (value: unknown): value is LogLevel => (logLevels
 
 export const isValidSubscriptionLevel = (value: unknown): value is SubscriptionLevel => (subscriptionLevels as readonly unknown[]).includes(value as number)
 
-const deviceLinkStatuses: DeviceLinkStatus[] = ['pending', 'approved', 'denied']
+const deviceLinkStatuses: DeviceLinkStatus[] = ['pending', 'approved', 'denied', 'failed']
 
 export const isValidDeviceLinkStatus = (value: unknown): value is DeviceLinkStatus => deviceLinkStatuses.includes(value as DeviceLinkStatus)
 
@@ -100,7 +100,8 @@ export const parsePushData = (data: unknown): PushData | null => {
     case 'note':
       return isId(d.appId) && isId(d.noteId) ? { type: 'note', appId: d.appId, noteId: d.noteId } : null
     case 'device_link':
-      return isId(d.deviceLinkId) ? { type: 'device_link', deviceLinkId: d.deviceLinkId, deviceName: typeof d.deviceName === 'string' ? d.deviceName : '' } : null
+    case 'device_link_answered':
+      return isId(d.deviceLinkId) ? { type: d.type, deviceLinkId: d.deviceLinkId, deviceName: typeof d.deviceName === 'string' ? d.deviceName : '' } : null
     case 'key_check':
       return isId(d.checkId) ? { type: 'key_check', checkId: d.checkId } : null
     case 'key_waiting':

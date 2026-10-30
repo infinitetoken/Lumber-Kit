@@ -50,7 +50,7 @@ import { LogLevel, LogRecord, LogEncrypted, LogPayload, LogsQuery } from '@infin
 | `PUSH_OFF` | constant | A push threshold one past Fatal (5): log pushes off |
 | `PushThreshold` | type | A `LogLevel` or `PUSH_OFF`, stored as a preference's `minimumLevel` |
 | `normalizePushThreshold` | function | A threshold from any stored or sent value: past Fatal is off, not a number is Warn |
-| `PushData` | type | The `data` each push type carries (`log`, `note`, `device_link`, `key_check`, `key_waiting`, `keys_shared`) |
+| `PushData` | type | The `data` each push type carries (`log`, `note`, `device_link`, `device_link_answered`, `key_check`, `key_waiting`, `keys_shared`) |
 | `parsePushData` | function | A push's data as `PushData`, or `null` for data no Lumber push sends |
 
 ### Socket events
@@ -100,6 +100,10 @@ import { LogLevel, LogRecord, LogEncrypted, LogPayload, LogsQuery } from '@infin
 | `AppKeyUpsertBody` | interface | Body of PUT /apps/:id/keys/:userId |
 | `KeyPin` | interface | An account key a user accepted for someone, with its MAC |
 | `HolderKeyCheck`, `ClaimantKeyCheck`, `KeyCheckResult` | interfaces | A key check as the holder and the person being confirmed read it |
+| `DeviceLinkCreateBody`, `DeviceLinkCreatedRecord` | interfaces | POST /device-links: a new device asking for the account key, and its answer |
+| `DeviceLinkRecord`, `DeviceLinkApproveBody` | interfaces | A link request as the new device polls it (the exchange's first message once a code is shown, then the account key and the tag proving a device that showed the code sent it), and the approval that carries them |
+| `PendingDeviceLink` | interface | A link request as a device holding the account key reads it, to show its code and finish it |
+| `DeviceLinkStatus`, `DeviceLinkPlatform` | types | `pending`, `approved`, `denied` or `failed` (a code that didn't match); what the request comes from |
 
 ### Colors
 

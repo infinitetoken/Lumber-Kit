@@ -9,6 +9,8 @@ export type PushData =
   | { type: 'note'; appId: string; noteId: string }
   /** A new device asking to link to the account (Lumber-Worker). */
   | { type: 'device_link'; deviceLinkId: string; deviceName: string }
+  /** The new device entered its link code, which a device holding the account key now checks (Lumber-API). */
+  | { type: 'device_link_answered'; deviceLinkId: string; deviceName: string }
   /** The person the reader gave a code entered it (Lumber-API). */
   | { type: 'key_check'; checkId: string }
   /** Someone is waiting for the reader to confirm their key, as new or changed (Lumber-API). */
