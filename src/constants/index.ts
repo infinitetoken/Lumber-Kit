@@ -1,5 +1,6 @@
 export * from './colors'
 export * from './errors'
+export * from './ingest'
 export * from './logLevel'
 export * from './notifications'
 export * from './subscription'

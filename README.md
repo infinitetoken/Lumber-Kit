@@ -125,6 +125,19 @@ import { LogLevel, LogRecord, LogEncrypted, LogPayload, LogsQuery } from '@infin
 
 A plugin sends only the token to the API (`Authorization: Bearer <token>`) and encrypts with the rest, so the encryption key never leaves it.
 
+### Plugins
+
+| Export | Kind | Purpose |
+|--------|------|---------|
+| `LogIngestBody` | interface | `POST /logs`' body: `{ level, encrypted }` |
+| `LogData` | interface | What a log call takes beside its message: `requestId`, `traceId`, `context`, `metadata` and any other keys |
+| `buildLogPayload` | function | The `LogPayload` a log call encrypts, from its level, message, data and the plugin's automatic context |
+| `DEFAULT_API_ENDPOINT` | constant | `https://api.lumber.infinitetoken.com` |
+| `LOG_KEY_VERSION` | constant | `LogEncrypted`'s `keyVersion` (1) |
+| `logDelivery` | object | Attempts, retry delays and the pause after a 429 |
+| `logDeliveryOutcome` | function | `sent`, `retry`, `drop` or `pause` for a `POST /logs` status (null for a network error) |
+| `logRetryDelayMs` | function | The wait after a log's nth failed attempt: 1s, 2s, 4s, up to 30s |
+
 ## Wire format
 
 All log content is E2E encrypted before leaving the client. `LogRecord` contains only:
@@ -135,14 +148,14 @@ All log content is E2E encrypted before leaving the client. `LogRecord` contains
   createdAt: string        // ISO 8601
   updatedAt: string        // ISO 8601
   appId:     string
-  encrypted: LogEncrypted  // opaque blob — server cannot read this
+  encrypted: LogEncrypted  // opaque to the server, which can't read it
 }
 ```
 
 `LogEncrypted` uses AES-256-GCM:
-- `nonce` — base64(random IV, 12 bytes)
-- `payload` — base64(authTag[16 bytes] + ciphertext)
-- `keyVersion` — always `1` for the current format; changes are semver major
+- `nonce`: base64(random IV, 12 bytes)
+- `payload`: base64(authTag[16 bytes] + ciphertext)
+- `keyVersion`: always `1` for the current format; changes are semver major
 
 The plaintext shape inside `payload` is `LogPayload`:
 
@@ -156,6 +169,10 @@ The plaintext shape inside `payload` is `LogPayload`:
   metadata?:  Record<string, unknown>
 }
 ```
+
+## Other languages
+
+TypeScript can't be imported from Python or Go, so the kit ships its contract in `contract/`: a JSON Schema of every exported type (`schema.json`, generated from the TypeScript by `npm run contract`) and known answers (`vectors.json`) for API keys, AES-256-GCM, payloads and delivery, which the kit's own tests check against its code. Lumber-Python and Lumber-Go test against a pinned copy. See `contract/README.md`.
 
 ## const enum and Babel consumers
 
