@@ -1,6 +1,8 @@
 # @infinitetoken/lumber-kit
 
-Shared TypeScript types, wire format contract, and query interfaces for the [Lumber](https://github.com/infinitetoken/Lumber) cloud logging suite.
+Shared TypeScript types, wire format contract, and query interfaces for the [Lumber](https://lumber.infinitetoken.com) cloud logging suite. Lumber is end-to-end encrypted: a client encrypts every log with AES-256-GCM before it leaves the process, and the server stores only ciphertext plus each log's level.
+
+To send logs from your own code, you want a client rather than this package: [`@infinitetoken/lumber`](https://github.com/infinitetoken/Lumber-Node) for Node.js, [`lumber-cloud`](https://github.com/infinitetoken/Lumber-Python) for Python or [`lumber-go`](https://github.com/infinitetoken/lumber-go) for Go. The kit is what those clients and Lumber's own apps and services share, and its [contract](contract/README.md) is what a client in any language is tested against.
 
 ## Install
 
@@ -172,7 +174,7 @@ The plaintext shape inside `payload` is `LogPayload`:
 
 ## Other languages
 
-TypeScript can't be imported from Python or Go, so the kit ships its contract in `contract/`: a JSON Schema of every exported type (`schema.json`, generated from the TypeScript by `npm run contract`) and known answers (`vectors.json`) for API keys, AES-256-GCM, payloads and delivery, which the kit's own tests check against its code. Lumber-Python and Lumber-Go test against a pinned copy. See `contract/README.md`.
+TypeScript can't be imported from Python or Go, so the kit ships its contract in `contract/`: a JSON Schema of every exported type (`schema.json`, generated from the TypeScript by `npm run contract`) and known answers (`vectors.json`) for API keys, AES-256-GCM, payloads and delivery, which the kit's own tests check against its code. Lumber-Python and Lumber-Go test against a pinned copy. See [`contract/README.md`](contract/README.md).
 
 ## const enum and Babel consumers
 
@@ -180,20 +182,26 @@ TypeScript can't be imported from Python or Go, so the kit ships its contract in
 
 If your project uses Babel, esbuild, or `isolatedModules: true`, the runtime enum object is available because Lumber-Kit is compiled with `preserveConstEnums: true`. No special configuration is needed.
 
-## Local development (yalc)
-
-Do NOT use `npm link` — it creates symlinks that break Metro in the Expo client.
+## Developing
 
 ```bash
-# In Lumber-Kit:
+npm install
+npm run verify     # lint, test, typecheck, build
+npm run contract   # regenerate contract/schema.json after changing a type
+```
+
+To try a change in a project that uses the kit before it's published, use [yalc](https://github.com/wclr/yalc) rather than `npm link`, whose symlinks break Metro (React Native's bundler):
+
+```bash
+# In Lumber-Kit
 npm run build
 yalc publish
 
-# In a consumer repo (Lumber-API, Lumber-Node, Lumber Expo client):
+# In the project using it
 yalc add @infinitetoken/lumber-kit
 npm install
 
-# After updating Lumber-Kit:
+# After each change to Lumber-Kit
 npm run build
-yalc push   # propagates to all linked consumers
+yalc push   # updates every project that added it
 ```
