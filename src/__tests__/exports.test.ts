@@ -1,4 +1,4 @@
-import { apiErrorCodeOf, APP_COLORS, DEFAULT_ACCENT, isApiErrorCode, isValidAppearance, isValidColor, isValidImageUrl, isValidLogLevel, isValidSubscriptionLevel, isValidTeamMemberRole, joinApiKey, LogLevel, logLevelColors, nameColor, normalizePushThreshold, parsePushData, personColor, PUSH_OFF, resolveAppColor, splitApiKey, SubscriptionLevel, subscriptionLevels, subscriptionPlans } from '../index'
+import { apiErrorCodeOf, APP_COLORS, DEFAULT_ACCENT, DEFAULT_TIME_FORMAT, isApiErrorCode, isValidAppearance, isValidColor, isValidImageUrl, isValidLogLevel, isValidSubscriptionLevel, isValidTeamMemberRole, isValidTimeFormat, joinApiKey, LogLevel, logLevelColors, nameColor, normalizePushThreshold, normalizeTimeFormat, parsePushData, personColor, PUSH_OFF, resolveAppColor, splitApiKey, SubscriptionLevel, subscriptionLevels, subscriptionPlans } from '../index'
 
 describe('isValidAppearance', () => {
   it('accepts valid values', () => {
@@ -249,5 +249,33 @@ describe('parsePushData', () => {
     expect(parsePushData({ type: 'other', appId: 'a' })).toBeNull()
     expect(parsePushData(null)).toBeNull()
     expect(parsePushData('log')).toBeNull()
+  })
+})
+
+describe('time formats', () => {
+  it('defaults to a 24-hour clock in the local zone', () => {
+    expect(DEFAULT_TIME_FORMAT).toEqual({ clock: '24h', zone: 'local' })
+  })
+
+  it('accepts a known clock and zone', () => {
+    expect(isValidTimeFormat({ clock: '12h', zone: 'utc' })).toBe(true)
+    expect(isValidTimeFormat({ clock: '24h', zone: 'local' })).toBe(true)
+  })
+
+  it('rejects anything else', () => {
+    expect(isValidTimeFormat(null)).toBe(false)
+    expect(isValidTimeFormat('24h')).toBe(false)
+    expect(isValidTimeFormat([])).toBe(false)
+    expect(isValidTimeFormat({ clock: '24h' })).toBe(false)
+    expect(isValidTimeFormat({ clock: '13h', zone: 'utc' })).toBe(false)
+    expect(isValidTimeFormat({ clock: '24h', zone: 'America/Chicago' })).toBe(false)
+    expect(isValidTimeFormat({ clock: '24h', zone: 'utc', extra: true })).toBe(false)
+  })
+
+  it('normalizes each part on its own', () => {
+    expect(normalizeTimeFormat(null)).toEqual(DEFAULT_TIME_FORMAT)
+    expect(normalizeTimeFormat({ clock: '12h' })).toEqual({ clock: '12h', zone: 'local' })
+    expect(normalizeTimeFormat({ clock: 'nope', zone: 'utc' })).toEqual({ clock: '24h', zone: 'utc' })
+    expect(normalizeTimeFormat({ clock: '12h', zone: 'utc' })).toEqual({ clock: '12h', zone: 'utc' })
   })
 })

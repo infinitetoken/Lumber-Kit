@@ -1,11 +1,27 @@
 export * from './ingest'
 
-import { type ApiErrorCode, apiErrorCodes, APP_COLORS, DEFAULT_PUSH_THRESHOLD, LogLevel, logLevels, PUSH_OFF, type PushThreshold, SubscriptionLevel, subscriptionLevels } from '../constants'
-import { Appearance, DeviceLinkStatus, PushData, TeamMemberRecord } from '../types'
+import { type ApiErrorCode, apiErrorCodes, APP_COLORS, DEFAULT_PUSH_THRESHOLD, DEFAULT_TIME_FORMAT, LogLevel, logLevels, PUSH_OFF, type PushThreshold, SubscriptionLevel, subscriptionLevels } from '../constants'
+import { Appearance, DeviceLinkStatus, PushData, TeamMemberRecord, TimeClock, TimeFormat, TimeZoneChoice } from '../types'
 
 const appearanceValues: Appearance[] = ['system', 'dark', 'light']
 
 export const isValidAppearance = (value: unknown): value is Appearance => appearanceValues.includes(value as Appearance)
+
+const timeClocks: TimeClock[] = ['24h', '12h']
+const timeZoneChoices: TimeZoneChoice[] = ['local', 'utc']
+
+/** A time format as sent or stored: an object with a known clock and zone, and nothing else. */
+export const isValidTimeFormat = (value: unknown): value is TimeFormat => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false
+  const { clock, zone, ...rest } = value as Record<string, unknown>
+  return timeClocks.includes(clock as TimeClock) && timeZoneChoices.includes(zone as TimeZoneChoice) && Object.keys(rest).length === 0
+}
+
+/** A stored or sent time format, each part the default (DEFAULT_TIME_FORMAT) when it's missing or unknown. */
+export const normalizeTimeFormat = (value: unknown): TimeFormat => {
+  const { clock, zone } = value && typeof value === 'object' ? (value as Record<string, unknown>) : {}
+  return { clock: timeClocks.includes(clock as TimeClock) ? (clock as TimeClock) : DEFAULT_TIME_FORMAT.clock, zone: timeZoneChoices.includes(zone as TimeZoneChoice) ? (zone as TimeZoneChoice) : DEFAULT_TIME_FORMAT.zone }
+}
 
 /** Accepts 3- and 6-digit hex color strings (#rgb, #rrggbb). */
 export const isValidColor = (value: string): boolean => /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(value)

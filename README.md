@@ -86,6 +86,10 @@ import { LogLevel, LogRecord, LogEncrypted, LogPayload, LogsQuery } from '@infin
 | `AppRecord` | interface | API response shape for an app |
 | `AppCreatedRecord` | interface | POST /apps 201 response (includes `encryptedKey` once) |
 | `UserRecord` | interface | API response shape for a user |
+| `TimeFormat` | interface | How a user reads times on every device: `{ clock: '24h' \| '12h', zone: 'local' \| 'utc' }` |
+| `DEFAULT_TIME_FORMAT` | constant | 24-hour, local: what a user gets until they pick one |
+| `isValidTimeFormat` | function | A known clock and zone, and nothing else |
+| `normalizeTimeFormat` | function | A stored or sent time format, each part the default when missing or unknown |
 | `TeamRecord` | interface | API response shape for a team |
 | `TeamMemberRecord` | interface | Team membership record (listed members carry name, handle, color and picture) |
 | `AppTeamAccess` | type | Who on an app's team reads it: `'everyone'` or `'owner'` |
