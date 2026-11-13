@@ -5,7 +5,10 @@ export interface ResponseMetadata {
   cursor?: string | null
   hasMore?: boolean
   count?: number
-  hiddenCount?: number
+  /** POST /logs past the team's monthly logs: how many logs it dropped (1), below ERROR (monthlyLogsCap). */
+  dropped?: number
+  /** With `dropped`: when every level is taken again (the next UTC month), an ISO time. */
+  cappedUntil?: string
 }
 
 export interface ApiResponse<T> {

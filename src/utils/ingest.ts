@@ -30,8 +30,9 @@ export const buildLogPayload = (level: LogLevel, message: string, data?: LogData
 }
 
 /**
- * What to do with a log once POST /logs answers with `status`, or null for no answer (a network error): sent on a 2xx,
- * pause on a 429, drop on any other 4xx, and retry on anything else.
+ * What to do with a log once POST /logs answers with `status`, or null for no answer (a network error): sent on a 2xx
+ * (the API's 200 for a log it dropped past the monthly cap too), pause on a 429, drop on any other 4xx, and retry on
+ * anything else.
  */
 export const logDeliveryOutcome = (status: number | null): LogDeliveryOutcome => {
   if (status === null) return 'retry'

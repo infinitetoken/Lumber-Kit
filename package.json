@@ -13,6 +13,10 @@
     "schema",
     "log-schema"
   ],
+  "homepage": "https://lumber.infinitetoken.com",
+  "bugs": {
+    "url": "https://github.com/infinitetoken/Lumber-Kit/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/infinitetoken/lumber-kit.git"
@@ -61,15 +65,15 @@
   "devDependencies": {
     "@infinitetoken/eslint-config": "^0.2.1",
     "@infinitetoken/jest-config": "^0.5.2",
-    "@infinitetoken/tsconfig": "^0.6.0",
+    "@infinitetoken/tsconfig": "^0.7.0",
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.0.0",
+    "@types/node": "^26.6.6",
     "ajv": "^8.20.0",
     "eslint": "^10.2.1",
     "jest": "^30.4.2",
     "prettier": "^3.8.3",
     "ts-json-schema-generator": "^2.9.0",
-    "tsup": "^8.5.1",
+    "tsup": "^9.0.0",
     "typescript": "^6.0.3"
   },
   "publishConfig": {

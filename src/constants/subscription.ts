@@ -1,4 +1,6 @@
-// Source: D-02 (locked decision — do not change numeric values without a semver major bump)
+// Source: D-02, a locked decision: change a numeric value only with a semver major bump. Jay changed them on
+// 2026-11-13: Hobby's monthly logs from 10,000 to 100,000 with push alerts on FATAL (it had none), and Dev's from
+// 250,000 to 500,000. Pro and Enterprise, and every plan's retention, seats, apps, API keys and realtime, are unchanged.
 
 import { LogLevel } from './logLevel'
 
@@ -38,11 +40,24 @@ export type SubscriptionLimits = {
 
 /** Per-level resource limits. Use Infinity to mean unlimited or disabled. */
 export const subscriptionLimits: Record<SubscriptionLevel, SubscriptionLimits> = {
-  [SubscriptionLevel.Hobby]: { apps: 5, seats: 1, apiKeys: 1, logRetentionDays: 7, monthlyLogs: 10000, realtimeLogs: false, minPushLevel: Infinity },
-  [SubscriptionLevel.Dev]: { apps: 10, seats: 5, apiKeys: 5, logRetentionDays: 30, monthlyLogs: 250000, realtimeLogs: true, minPushLevel: LogLevel.Error },
+  [SubscriptionLevel.Hobby]: { apps: 5, seats: 1, apiKeys: 1, logRetentionDays: 7, monthlyLogs: 100000, realtimeLogs: false, minPushLevel: LogLevel.Fatal },
+  [SubscriptionLevel.Dev]: { apps: 10, seats: 5, apiKeys: 5, logRetentionDays: 30, monthlyLogs: 500000, realtimeLogs: true, minPushLevel: LogLevel.Error },
   [SubscriptionLevel.Pro]: { apps: 20, seats: 20, apiKeys: 15, logRetentionDays: 90, monthlyLogs: 2000000, realtimeLogs: true, minPushLevel: LogLevel.Warn },
   [SubscriptionLevel.Enterprise]: { apps: Infinity, seats: Infinity, apiKeys: Infinity, logRetentionDays: Infinity, monthlyLogs: Infinity, realtimeLogs: true, minPushLevel: LogLevel.Debug }
 }
+
+/**
+ * What happens past a team's monthly logs (Jay, 2026-11-13: errors always get through). Past its plan's monthlyLogs,
+ * POST /logs still takes ERROR and FATAL and drops lower levels, answering a dropped log 200 with `metadata.dropped`
+ * so a plugin carries on, until `hardStopMultiple` times monthlyLogs, when it refuses every log with a 429 until the
+ * next UTC month. Only the logs it takes count in usage, so the hard stop measures what every device holds.
+ */
+export const monthlyLogsCap = {
+  /** The lowest level still taken past the cap. */
+  minLevelPastCap: LogLevel.Error,
+  /** Where every log is refused, as a multiple of the plan's monthlyLogs. */
+  hardStopMultiple: 2
+} as const
 
 export type SubscriptionPlan = {
   /** Display name, as every surface shows it. */

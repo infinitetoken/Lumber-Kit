@@ -36,6 +36,7 @@ import { LogLevel, LogRecord, LogEncrypted, LogPayload, LogsQuery } from '@infin
 | `SubscriptionLevel` | `const enum` | Team tier: Hobby=0 Dev=1 Pro=2 Enterprise=3 |
 | `subscriptionLevelToName` | object | Maps `SubscriptionLevel` to `'hobby' \| 'dev' \| 'pro' \| 'enterprise'` |
 | `subscriptionLimits` | object | Per-tier limits (apps, seats, apiKeys, logRetentionDays, etc.) |
+| `monthlyLogsCap` | object | Past `monthlyLogs`: the lowest level still taken (ERROR) and the hard stop's multiple (2), where every log is refused |
 | `isValidSubscriptionLevel` | function | Type guard for `SubscriptionLevel` values |
 
 ### Plans
@@ -140,6 +141,7 @@ A plugin sends only the token to the API (`Authorization: Bearer <token>`) and e
 | `buildLogPayload` | function | The `LogPayload` a log call encrypts, from its level, message, data and the plugin's automatic context |
 | `DEFAULT_API_ENDPOINT` | constant | `https://api.lumber.infinitetoken.com` |
 | `LOG_KEY_VERSION` | constant | `LogEncrypted`'s `keyVersion` (1) |
+| `MAX_LOG_PAYLOAD_LENGTH` | constant | The longest `encrypted.payload` `POST /logs` takes (16 KB of base64); longer is refused with a 413 |
 | `logDelivery` | object | Attempts, retry delays and the pause after a 429 |
 | `logDeliveryOutcome` | function | `sent`, `retry`, `drop` or `pause` for a `POST /logs` status (null for a network error) |
 | `logRetryDelayMs` | function | The wait after a log's nth failed attempt: 1s, 2s, 4s, up to 30s |

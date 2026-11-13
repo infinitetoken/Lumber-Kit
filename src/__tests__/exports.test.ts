@@ -1,4 +1,4 @@
-import { apiErrorCodeOf, APP_COLORS, DEFAULT_ACCENT, DEFAULT_TIME_FORMAT, isApiErrorCode, isValidAppearance, isValidColor, isValidImageUrl, isValidLogLevel, isValidSubscriptionLevel, isValidTeamMemberRole, isValidTimeFormat, joinApiKey, LogLevel, logLevelColors, nameColor, normalizePushThreshold, normalizeTimeFormat, parsePushData, personColor, PUSH_OFF, resolveAppColor, splitApiKey, SubscriptionLevel, subscriptionLevels, subscriptionPlans } from '../index'
+import { apiErrorCodeOf, APP_COLORS, DEFAULT_ACCENT, DEFAULT_TIME_FORMAT, isApiErrorCode, isValidAppearance, isValidColor, isValidImageUrl, isValidLogLevel, isValidSubscriptionLevel, isValidTeamMemberRole, isValidTimeFormat, joinApiKey, LogLevel, logLevelColors, MAX_LOG_PAYLOAD_LENGTH, monthlyLogsCap, nameColor, normalizePushThreshold, normalizeTimeFormat, parsePushData, personColor, PUSH_OFF, resolveAppColor, splitApiKey, SubscriptionLevel, subscriptionLevels, subscriptionLimits, subscriptionPlans } from '../index'
 
 describe('isValidAppearance', () => {
   it('accepts valid values', () => {
@@ -205,6 +205,25 @@ describe('subscriptionPlans', () => {
     expect(subscriptionPlans[SubscriptionLevel.Dev].monthlyPrice).toBe(9)
     expect(subscriptionPlans[SubscriptionLevel.Pro].monthlyPrice).toBe(39)
     expect(subscriptionPlans[SubscriptionLevel.Enterprise].monthlyPrice).toBeNull()
+  })
+})
+
+describe('subscriptionLimits', () => {
+  // Jay's limits of 2026-11-13 (D-02): a change here is a semver major
+  it('gives each plan its monthly logs and push floor', () => {
+    expect(subscriptionLevels.map((level) => subscriptionLimits[level].monthlyLogs)).toEqual([100_000, 500_000, 2_000_000, Infinity])
+    expect(subscriptionLevels.map((level) => subscriptionLimits[level].minPushLevel)).toEqual([LogLevel.Fatal, LogLevel.Error, LogLevel.Warn, LogLevel.Debug])
+    expect(subscriptionLevels.map((level) => subscriptionLimits[level].logRetentionDays)).toEqual([7, 30, 90, Infinity])
+  })
+
+  it('takes ERROR and FATAL past the cap, up to twice it', () => {
+    expect(monthlyLogsCap).toEqual({ minLevelPastCap: LogLevel.Error, hardStopMultiple: 2 })
+  })
+})
+
+describe('MAX_LOG_PAYLOAD_LENGTH', () => {
+  it('is 16 KB', () => {
+    expect(MAX_LOG_PAYLOAD_LENGTH).toBe(16_384)
   })
 })
 

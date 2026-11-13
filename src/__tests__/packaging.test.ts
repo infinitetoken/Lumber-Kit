@@ -1,12 +1,12 @@
 import fs from 'fs'
 import path from 'path'
 
-const distPath = path.resolve(__dirname, '../../dist/cjs/index.js')
+const distPath = path.resolve(__dirname, '../../dist/index.js')
 
 const kit: any = fs.existsSync(distPath) ? require(distPath) : null
 const t = kit != null ? it : it.skip
 
-describe('packaging smoke — dist/cjs (requires `npm run build`)', () => {
+describe('packaging smoke: dist/index.js, the CommonJS build (requires `npm run build`)', () => {
   t('exports LogLevel with correct numeric values', () => {
     expect(kit.LogLevel.Debug).toBe(0)
     expect(kit.LogLevel.Info).toBe(1)

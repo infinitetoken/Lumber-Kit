@@ -388,7 +388,14 @@
             "string",
             "null"
           ],
-          "description": "While the team has sent its plan's monthly logs, when new ones are taken again (the next UTC month); else null."
+          "description": "While the team has sent its plan's monthly logs, when every level is taken again (the next UTC month); else null. Until then only ERROR and FATAL are taken (monthlyLogsCap)."
+        },
+        "logsStoppedUntil": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "While the team is at its hard stop (twice its plan's monthly logs, monthlyLogsCap), when any log is taken again (the next UTC month); else null. Set only alongside logsCappedUntil."
         }
       },
       "required": [
@@ -447,7 +454,14 @@
             "string",
             "null"
           ],
-          "description": "While the team has sent its plan's monthly logs, when new ones are taken again (the next UTC month); else null."
+          "description": "While the team has sent its plan's monthly logs, when every level is taken again (the next UTC month); else null. Until then only ERROR and FATAL are taken (monthlyLogsCap)."
+        },
+        "logsStoppedUntil": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "While the team is at its hard stop (twice its plan's monthly logs, monthlyLogsCap), when any log is taken again (the next UTC month); else null. Set only alongside logsCappedUntil."
         },
         "apiKey": {
           "type": "string"
@@ -1631,8 +1645,13 @@
         "count": {
           "type": "number"
         },
-        "hiddenCount": {
-          "type": "number"
+        "dropped": {
+          "type": "number",
+          "description": "POST /logs past the team's monthly logs: how many logs it dropped (1), below ERROR (monthlyLogsCap)."
+        },
+        "cappedUntil": {
+          "type": "string",
+          "description": "With `dropped`: when every level is taken again (the next UTC month), an ISO time."
         }
       },
       "required": [

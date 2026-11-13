@@ -34,8 +34,16 @@ export interface AppRecord {
   teamAccess?: AppTeamAccess
   /** How many days of its logs the app's team's plan keeps, null for no limit (and when missing). */
   retentionDays?: number | null
-  /** While the team has sent its plan's monthly logs, when new ones are taken again (the next UTC month); else null. */
+  /**
+   * While the team has sent its plan's monthly logs, when every level is taken again (the next UTC month); else null.
+   * Until then only ERROR and FATAL are taken (monthlyLogsCap).
+   */
   logsCappedUntil?: string | null
+  /**
+   * While the team is at its hard stop (twice its plan's monthly logs, monthlyLogsCap), when any log is taken again
+   * (the next UTC month); else null. Set only alongside logsCappedUntil.
+   */
+  logsStoppedUntil?: string | null
 }
 
 /**
